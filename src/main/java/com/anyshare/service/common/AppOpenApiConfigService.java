@@ -12,7 +12,7 @@ public interface AppOpenApiConfigService {
 
     AppOpenApiConfigPO findByAppTag(String appTag);
 
-    Long insert(AppOpenApiConfigPO appOpenApiConfig);
+    Long saveOrUpdate(AppOpenApiConfigPO appOpenApiConfig);
 
     List<AppOpenApiConfigPO> findAll();
 }

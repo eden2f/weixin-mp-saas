@@ -148,7 +148,7 @@ public class WeixinServiceImpl implements WeixinService {
      * 拉取永久素材中的图文
      */
     @Override
-    public void materialNewsSynchronism(String appTag, WxMpMaterialService wxMpMaterialService) throws WxErrorException {
+    public void materialNewsSynchronizer(String appTag, WxMpMaterialService wxMpMaterialService) throws WxErrorException {
         int startIndex = 0;
         int size = 20;
         WxMpMaterialCountResult wxMpMaterialCountResult = wxMpMaterialService.materialCount();

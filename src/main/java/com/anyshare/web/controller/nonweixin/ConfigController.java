@@ -3,6 +3,7 @@ package com.anyshare.web.controller.nonweixin;
 import com.anyshare.service.ConfigService;
 import com.anyshare.web.dto.RetResult;
 import com.anyshare.web.dto.weixin.OpenapiConfigAddReq;
+import com.anyshare.web.dto.weixin.OpenapiConfigUpdateReq;
 import lombok.extern.slf4j.Slf4j;
 import me.chanjar.weixin.common.error.WxErrorException;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -26,8 +27,14 @@ public class ConfigController {
     private ConfigService configService;
 
     @PostMapping(value = "weixin/openapi/add")
-    public RetResult<String> openapiConfigAdd(@Valid @RequestBody OpenapiConfigAddReq req) throws WxErrorException {
+    public RetResult<Void> openapiConfigAdd(@Valid @RequestBody OpenapiConfigAddReq req) throws WxErrorException {
         configService.openapiConfigAdd(req);
+        return RetResult.success();
+    }
+
+    @PostMapping(value = "weixin/openapi/update")
+    public RetResult<Void> openapiConfigUpdate(@Valid @RequestBody OpenapiConfigUpdateReq req) throws WxErrorException {
+        configService.openapiConfigUpdate(req);
         return RetResult.success();
     }
 }

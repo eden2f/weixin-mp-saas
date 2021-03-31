@@ -35,8 +35,9 @@ mvn clean package -Dmaven.test.skip=true
 * 启动服务
 
 ```shell
-java -jar any-share.jar
+java -jar weixin-mp-saas.jar
 ```
+
 * 配置项
     * server.port 服务端口号, 默认是 8080
     * mysql.host 默认是 127.0.0.1:3306
@@ -50,7 +51,11 @@ java -jar -Dserver.port=8080 -Dmysql.host=localhost:3306 -Dmysql.username=root -
 
 #### 使用说明
 
-1.  调用Http接口新增微信公众号配置
+**注意：需先在微信公众平台完成"IP白名单"设置**
+
+##### 新增微信公众号配置
+
+* 调用Http接口
     * 开发者密码(AppSecret) : "secret"
     * 消息加解密密钥 : "aesKey"
     * 开发者ID(AppID) : "appid"
@@ -58,12 +63,13 @@ java -jar -Dserver.port=8080 -Dmysql.host=localhost:3306 -Dmysql.username=root -
     * 应用标识 : "appTag"
 
 appTag与微信无关, 是本项目用于标识应用的, 因为本项目可支持多个微信公众号. 
-所以 appTag 就是用来区别不同公众号的一个配置项.
+
+appTag 就是用来区别不同公众号的一个配置项.
+
 假设 appTag 设置为 "WeixinMPSaaS", 那么在公众号基本配置页面配置如下 : 
-    
+
 ![功能示例](docs/imgs/2330330214528.png)
-    
-    
+
 ```shell script
 curl --location --request POST 'http://127.0.0.1:8080/config/weixin/openapi/add' \
 --header 'Content-Type: application/json' \
@@ -77,6 +83,30 @@ curl --location --request POST 'http://127.0.0.1:8080/config/weixin/openapi/add'
     "verifyKey":"xx"
 }'
 ```
+
+##### 更新微信公众号配置
+
+大多数请求参数与"新增微信公众号配置"接口一样，不再赘述. 
+
+openapiConfigVerify.secret 用于验证,当其等于原有配置的secret,才允许更新. 
+
+```shell script
+curl --location --request POST 'http://127.0.0.1:8080/config/weixin/openapi/update' \
+--header 'Content-Type: application/json' \
+--data-raw '{
+    "appTag":"xx",
+    "secret":"xx",
+    "aesKey":"xx",
+    "appId":"xx",
+    "token":"xx",
+    "verifyValue":"",
+    "verifyKey":"",
+    "openapiConfigVerify":{
+        "secret":"xx"
+    }
+}'
+```
+
 
 #### 效果演示
 

@@ -1,7 +1,7 @@
 package com.anyshare.service;
 
 import com.anyshare.web.dto.weixin.OpenapiConfigAddReq;
-import me.chanjar.weixin.common.error.WxErrorException;
+import com.anyshare.web.dto.weixin.OpenapiConfigUpdateReq;
 
 /**
  * @author Eden
@@ -9,5 +9,7 @@ import me.chanjar.weixin.common.error.WxErrorException;
  */
 public interface ConfigService {
 
-    void openapiConfigAdd(OpenapiConfigAddReq req) throws WxErrorException;
+    void openapiConfigAdd(OpenapiConfigAddReq req);
+
+    void openapiConfigUpdate(OpenapiConfigUpdateReq req);
 }

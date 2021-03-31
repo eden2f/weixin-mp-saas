@@ -16,18 +16,18 @@ import java.util.concurrent.ThreadPoolExecutor;
 @EnableAsync
 @Configuration
 public class ThreadPoolConfig {
-    private int corePoolSize = Runtime.getRuntime().availableProcessors() + 1;
-    private int maxPoolSize = corePoolSize * 2;
-    private static final int queueCapacity = 50;
-    private static final int keepAliveSeconds = 30;
+    private final int corePoolSize = Runtime.getRuntime().availableProcessors() + 1;
+    private final int maxPoolSize = corePoolSize * 2;
+    private static final int QUEUE_CAPACITY = 50;
+    private static final int KEEP_ALIVE_SECONDS = 30;
 
     @Bean(name = "taskExecutor")
     public Executor taskExecutor() {
         ThreadPoolTaskExecutor executor = new ThreadPoolTaskExecutor();
         executor.setMaxPoolSize(maxPoolSize);
         executor.setCorePoolSize(corePoolSize);
-        executor.setQueueCapacity(queueCapacity);
-        executor.setKeepAliveSeconds(keepAliveSeconds);
+        executor.setQueueCapacity(QUEUE_CAPACITY);
+        executor.setKeepAliveSeconds(KEEP_ALIVE_SECONDS);
         executor.setThreadNamePrefix("taskExecutor-");
         executor.setTaskDecorator(new MdcTaskDecorator());
         executor.setRejectedExecutionHandler(new ThreadPoolExecutor.CallerRunsPolicy());

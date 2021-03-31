@@ -28,7 +28,7 @@ public class AppOpenApiConfigServiceTest {
         appOpenApiConfig.setAesKey(RandomUtil.randomString(10));
         appOpenApiConfig.setVerifyKey(RandomUtil.randomString(10));
         appOpenApiConfig.setVerifyValue(RandomUtil.randomString(10));
-        Long id = appOpenApiConfigService.insert(appOpenApiConfig);
+        Long id = appOpenApiConfigService.saveOrUpdate(appOpenApiConfig);
         Assert.isTrue(id != null, "insert");
         return appOpenApiConfig;
     }

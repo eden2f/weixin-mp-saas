@@ -41,7 +41,7 @@ public class AppOpenApiConfigServiceImpl implements AppOpenApiConfigService {
     }
 
     @Override
-    public Long insert(AppOpenApiConfigPO appOpenApiConfig) {
+    public Long saveOrUpdate(AppOpenApiConfigPO appOpenApiConfig) {
         AppOpenApiConfigPO appOpenApiConfigInDb = findByAppTag(appOpenApiConfig.getAppTag());
         if (appOpenApiConfigInDb == null) {
             appOpenApiConfigInDb = appOpenApiConfigRepository.findByAppid(appOpenApiConfig.getAppid());

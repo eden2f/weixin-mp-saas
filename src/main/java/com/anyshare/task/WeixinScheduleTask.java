@@ -39,7 +39,7 @@ public class WeixinScheduleTask {
             try {
                 WxMpService wxMpService = WxMpConfig.getWxMpServiceByAppTag(appTag);
                 WxMpMaterialService wxMpMaterialService = wxMpService.getMaterialService();
-                weixinService.materialNewsSynchronism(appTag, wxMpMaterialService);
+                weixinService.materialNewsSynchronizer(appTag, wxMpMaterialService);
             } catch (Exception e) {
                 log.info(String.format("同步微信物料发生异常, %s", appTag), e);
             }

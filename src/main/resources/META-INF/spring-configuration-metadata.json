@@ -1,0 +1,24 @@
+{
+  "properties": [
+    {
+      "name": "mysql.host",
+      "type": "java.lang.String",
+      "description": "默认是 127.0.0.1:3306."
+    },
+    {
+      "name": "mysql.username",
+      "type": "java.lang.String",
+      "description": "默认是 root."
+    },
+    {
+      "name": "mysql.password",
+      "type": "java.lang.String",
+      "description": "默认是 toor."
+    },
+    {
+      "name": "mysql.database.name",
+      "type": "java.lang.String",
+      "description": "数据库名称 默认是 weixin_mp_saas."
+    }
+  ]
+}

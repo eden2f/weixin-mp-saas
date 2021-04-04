@@ -1,6 +1,6 @@
 # WeixinMPSaaS
 
-#### 介绍
+### 介绍
 微信公众号后台服务SaaS, 支持微信公众平台(订阅号、服务号、企业号、小程序). 
 
 * 支持多个微信公众号配置
@@ -8,18 +8,21 @@
 
 本项目仍在不断迭代开发中,遇到问题请提 issues , 谢谢配合. 
 
-> [微信公众号开发官方文档](https://developers.weixin.qq.com/doc/)
+> * [微信公众号开发官方文档](https://developers.weixin.qq.com/doc/)
+> * [微信公众号开发SDK](https://github.com/Wechat-Group/WxJava)
 
-> [微信公众号开发SDK](https://github.com/Wechat-Group/WxJava)
+### 代码仓库
 
+* [Github项目路径 : https://github.com/eden2f/weixin-mp-saas](https://github.com/eden2f/weixin-mp-saas)
+* [Gitee项目路径 : https://gitee.com/eden2f/weixin-mp-saas](https://gitee.com/eden2f/weixin-mp-saas)
 
-#### 软件架构
+### 软件架构
 
 本项目基于 Spring Boot 构建, 对接微信公众号Api.
 
 ![微信公众号示例](docs/imgs/WeixinMPSaaS组件图.png)
 
-#### 安装教程
+### 安装教程
 
 * 创建MySQL数据库
 ```mysql
@@ -49,11 +52,11 @@ java -jar weixin-mp-saas.jar
 java -jar -Dserver.port=8080 -Dmysql.host=localhost:3306 -Dmysql.username=root -Dmysql.password=toor -Dmysql.database.name=weixin_mp_saas weixin-mp-saas.jar
 ```
 
-#### 使用说明
+### 使用说明
 
 **注意：需先在微信公众平台完成"IP白名单"设置**
 
-##### 新增微信公众号配置
+#### 新增微信公众号配置
 
 * 调用Http接口
     * 开发者密码(AppSecret) : "secret"
@@ -84,7 +87,7 @@ curl --location --request POST 'http://127.0.0.1:8080/config/weixin/openapi/add'
 }'
 ```
 
-##### 更新微信公众号配置
+#### 更新微信公众号配置
 
 大多数请求参数与"新增微信公众号配置"接口一样，不再赘述. 
 
@@ -108,7 +111,7 @@ curl --location --request POST 'http://127.0.0.1:8080/config/weixin/openapi/upda
 ```
 
 
-#### 效果演示
+### 效果演示
 
 ![微信公众号示例](docs/imgs/589694216028358.jpg)
 

@@ -19,7 +19,9 @@ public class MdcTaskDecorator implements TaskDecorator {
         Map<String, String> map = MDC.getCopyOfContextMap();
         return () -> {
             try {
-                MDC.setContextMap(map);
+                if(map != null){
+                    MDC.setContextMap(map);
+                }
                 String traceId = MDC.get(TRACE_ID);
                 if (StringUtils.isBlank(traceId)) {
                     traceId = UUID.randomUUID().toString();

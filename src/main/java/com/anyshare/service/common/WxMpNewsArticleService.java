@@ -15,5 +15,5 @@ public interface WxMpNewsArticleService {
 
     Optional<WxMpNewsArticlePO> findTopByTitle(String appTag, String title);
 
-    Long insert(String appTag, WxMpNewsArticlePO wxMpNewsArticlePO);
+    Long insert(String appTag, WxMpNewsArticlePO wxMpNewsArticlePo);
 }

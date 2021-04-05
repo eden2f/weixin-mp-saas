@@ -1,6 +1,9 @@
 package com.anyshare.jpa.po;
 
-import lombok.Data;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
+import lombok.ToString;
 
 import javax.persistence.*;
 
@@ -9,8 +12,12 @@ import javax.persistence.*;
  * @date 2020/07/25
  */
 @Entity
-@Data
-@Table(name = "t_wx_mp_news_article")
+@Getter
+@Setter
+@NoArgsConstructor
+@ToString(callSuper = true)
+@Table(name = "t_wx_mp_news_article",
+        indexes = {@Index(columnList = "appTag"), @Index(columnList = "title")})
 public class WxMpNewsArticlePO extends BasePO {
 
     /**
@@ -25,7 +32,7 @@ public class WxMpNewsArticlePO extends BasePO {
     /**
      * 图文消息的标题
      */
-    @Column(unique = true)
+    @Column
     private String title;
     /**
      * 图文消息的原文地址，即点击“阅读原文”后的URL

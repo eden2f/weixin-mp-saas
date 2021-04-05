@@ -1,17 +1,21 @@
 package com.anyshare.jpa.po;
 
-import lombok.Data;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
+import lombok.ToString;
 
-import javax.persistence.Column;
-import javax.persistence.Entity;
-import javax.persistence.Table;
+import javax.persistence.*;
 
 /**
  * @author Eden
  * @date 2020/07/25
  */
 @Entity
-@Data
+@Getter
+@Setter
+@NoArgsConstructor
+@ToString(callSuper = true)
 @Table(name = "t_app_open_api")
 public class AppOpenApiConfigPO extends BasePO {
 

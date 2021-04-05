@@ -1,7 +1,7 @@
 package com.anyshare.jpa.po;
 
 import com.anyshare.enums.DelStatus;
-import lombok.Data;
+import lombok.*;
 
 import javax.persistence.Column;
 import javax.persistence.GeneratedValue;
@@ -14,8 +14,11 @@ import java.util.Date;
  * @author Eden
  * @date 2020/07/25
  */
-@Data
+@Getter
+@Setter
+@ToString
 @MappedSuperclass
+@NoArgsConstructor
 public abstract class BasePO {
 
     @Id

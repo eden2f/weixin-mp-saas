@@ -1,21 +1,26 @@
 package com.anyshare.jpa.po;
 
-import lombok.Data;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
+import lombok.ToString;
 
-import javax.persistence.Column;
-import javax.persistence.Entity;
-import javax.persistence.Table;
+import javax.persistence.*;
 
 /**
  * @author Eden
  * @date 2020/07/25
  */
 @Entity
-@Data
-@Table(name = "t_share_resource")
+@Getter
+@Setter
+@NoArgsConstructor
+@ToString(callSuper = true)
+@Table(name = "t_share_resource",
+        indexes = {@Index(columnList = "appTag"), @Index(columnList = "name")})
 public class ShareResourcePO extends BasePO {
 
-    @Column(nullable = false, unique = true)
+    @Column(nullable = false)
     private String name;
 
     @Column(nullable = false)

@@ -24,9 +24,9 @@ public class ShareResourceServiceTest {
     @Test
     void insert() {
         ShareResourcePO shareResource = ShareResourcePO.createDefault(ShareResourcePO.class);
-        shareResource.setName("尚硅谷Java安全密码学教程");
-        shareResource.setContent("链接: https://pan.baidu.com/s/1jCcHtSpGiaFgyNFbAqSlFQ 提取码: 5pk2 复制这段内容后打开百度网盘手机App，操作更方便哦");
-        shareResource.setWeixinPushContent("链接: https://pan.baidu.com/s/1jCcHtSpGiaFgyNFbAqSlFQ 提取码: 5pk2 复制这段内容后打开百度网盘手机App，操作更方便哦");
+        shareResource.setName("Test ShareResource");
+        shareResource.setContent("ShareResource ShareResource ShareResource ShareResource ShareResource");
+        shareResource.setWeixinPushContent("ShareResource ShareResource ShareResource ShareResource ShareResource");
         Long id = shareResourceService.insert(AppTag.Test.getCode(), shareResource);
         Assert.isTrue(id != null, "insert");
     }

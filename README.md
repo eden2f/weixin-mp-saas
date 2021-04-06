@@ -71,10 +71,12 @@ appTag 就是用来区别不同公众号的一个配置项.
 
 假设 appTag 设置为 "WeixinMPSaaS", 那么在公众号基本配置页面配置如下 : 
 
+**服务全局前缀 : /weixin-mp-saas (下面的图还没更新)**
+
 ![功能示例](docs/imgs/2330330214528.png)
 
 ```shell script
-curl --location --request POST 'http://127.0.0.1:8080/config/weixin/openapi/add' \
+curl --location --request POST 'http://127.0.0.1:8080/weixin-mp-saas/config/weixin/openapi/add' \
 --header 'Content-Type: application/json' \
 --data-raw '{
     "appTag":"xx",
@@ -94,7 +96,7 @@ curl --location --request POST 'http://127.0.0.1:8080/config/weixin/openapi/add'
 openapiConfigVerify.secret 用于验证,当其等于原有配置的secret,才允许更新. 
 
 ```shell script
-curl --location --request POST 'http://127.0.0.1:8080/config/weixin/openapi/update' \
+curl --location --request POST 'http://127.0.0.1:8080/weixin-mp-saas/config/weixin/openapi/update' \
 --header 'Content-Type: application/json' \
 --data-raw '{
     "appTag":"xx",
@@ -116,3 +118,27 @@ curl --location --request POST 'http://127.0.0.1:8080/config/weixin/openapi/upda
 ![微信公众号示例](docs/imgs/589694216028358.jpg)
 
 ![功能示例](docs/imgs/6a9eedd92fa741959b41936632a5941.jpg)
+
+### 其他配置
+
+#### nignx 反向代理
+
+```shell script
+server {
+
+	# 极简配置, 需要其他配置项自行补上
+	listen 80;
+
+	location /weixin-mp-saas/ {
+		proxy_pass http://127.0.0.1:8080/weixin-mp-saas/;
+	}
+}
+```
+
+
+
+
+
+
+
+

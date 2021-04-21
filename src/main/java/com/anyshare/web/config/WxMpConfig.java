@@ -1,6 +1,6 @@
 package com.anyshare.web.config;
 
-import com.anyshare.jpa.po.AppOpenApiConfigPO;
+import com.anyshare.jpa.mysql.po.AppOpenApiConfigPO;
 import com.anyshare.service.common.AppOpenApiConfigService;
 import me.chanjar.weixin.mp.api.WxMpService;
 import me.chanjar.weixin.mp.api.impl.WxMpServiceImpl;

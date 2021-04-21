@@ -1,6 +1,6 @@
 package com.anyshare.service.common;
 
-import com.anyshare.jpa.po.ShareResourcePO;
+import com.anyshare.jpa.mysql.po.ShareResourcePO;
 
 import java.util.List;
 

@@ -1,6 +1,6 @@
 package com.anyshare.service.common;
 
-import com.anyshare.jpa.po.WxMpNewsArticlePO;
+import com.anyshare.jpa.mysql.po.WxMpNewsArticlePO;
 
 import java.util.List;
 import java.util.Optional;

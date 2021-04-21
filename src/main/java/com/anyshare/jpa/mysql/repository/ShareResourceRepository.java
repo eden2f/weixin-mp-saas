@@ -1,6 +1,6 @@
-package com.anyshare.jpa.repository;
+package com.anyshare.jpa.mysql.repository;
 
-import com.anyshare.jpa.po.ShareResourcePO;
+import com.anyshare.jpa.mysql.po.ShareResourcePO;
 import org.springframework.data.jpa.repository.JpaRepository;
 
 import java.util.List;

@@ -1,4 +1,4 @@
-package com.anyshare.jpa.po;
+package com.anyshare.jpa.mysql.po;
 
 import com.anyshare.enums.DelStatus;
 import lombok.*;
@@ -34,7 +34,7 @@ public abstract class BasePO {
     @Column(nullable = false)
     private Date updateTime;
 
-    @Column(nullable = true)
+    @Column
     private String updateUser;
 
     /**

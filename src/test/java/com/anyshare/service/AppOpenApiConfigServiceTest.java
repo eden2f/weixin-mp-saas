@@ -1,7 +1,7 @@
 package com.anyshare.service;
 
 import cn.hutool.core.util.RandomUtil;
-import com.anyshare.jpa.po.AppOpenApiConfigPO;
+import com.anyshare.jpa.mysql.po.AppOpenApiConfigPO;
 import com.anyshare.service.common.AppOpenApiConfigService;
 import org.junit.jupiter.api.Test;
 import org.springframework.boot.test.context.SpringBootTest;

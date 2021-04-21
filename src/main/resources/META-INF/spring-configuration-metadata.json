@@ -19,6 +19,11 @@
       "name": "mysql.database.name",
       "type": "java.lang.String",
       "description": "数据库名称 默认是 weixin_mp_saas."
+    },
+    {
+      "name": "elasticsearch.hostAndPort",
+      "type": "java.lang.String",
+      "description": "Description for elasticsearch.hostAndPort."
     }
   ]
 }

@@ -1,6 +1,6 @@
 package com.anyshare.service.common;
 
-import com.anyshare.jpa.po.AppOpenApiConfigPO;
+import com.anyshare.jpa.mysql.po.AppOpenApiConfigPO;
 
 import java.util.List;
 

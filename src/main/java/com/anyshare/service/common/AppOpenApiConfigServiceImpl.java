@@ -2,8 +2,8 @@ package com.anyshare.service.common;
 
 import cn.hutool.core.bean.BeanUtil;
 import cn.hutool.core.bean.copier.CopyOptions;
-import com.anyshare.jpa.po.AppOpenApiConfigPO;
-import com.anyshare.jpa.repository.AppOpenApiConfigRepository;
+import com.anyshare.jpa.mysql.po.AppOpenApiConfigPO;
+import com.anyshare.jpa.mysql.repository.AppOpenApiConfigRepository;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 

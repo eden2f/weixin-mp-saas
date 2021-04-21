@@ -1,6 +1,6 @@
-package com.anyshare.jpa.repository;
+package com.anyshare.jpa.mysql.repository;
 
-import com.anyshare.jpa.po.AppOpenApiConfigPO;
+import com.anyshare.jpa.mysql.po.AppOpenApiConfigPO;
 import org.springframework.data.jpa.repository.JpaRepository;
 
 /**

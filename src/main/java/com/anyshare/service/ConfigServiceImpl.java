@@ -1,7 +1,7 @@
 package com.anyshare.service;
 
 import com.anyshare.exception.ServiceException;
-import com.anyshare.jpa.po.AppOpenApiConfigPO;
+import com.anyshare.jpa.mysql.po.AppOpenApiConfigPO;
 import com.anyshare.service.common.AppOpenApiConfigService;
 import com.anyshare.web.config.WxMpConfig;
 import com.anyshare.web.dto.weixin.OpenapiConfigAddReq;

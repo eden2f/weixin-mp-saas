@@ -1,4 +1,4 @@
-package com.anyshare.jpa.po;
+package com.anyshare.jpa.mysql.po;
 
 import lombok.Getter;
 import lombok.NoArgsConstructor;

@@ -2,7 +2,7 @@ package com.anyshare.service;
 
 import cn.hutool.core.util.RandomUtil;
 import com.anyshare.enums.AppTag;
-import com.anyshare.jpa.po.ShareResourcePO;
+import com.anyshare.jpa.mysql.po.ShareResourcePO;
 import com.anyshare.service.common.ShareResourceService;
 import org.junit.jupiter.api.Test;
 import org.springframework.boot.test.context.SpringBootTest;

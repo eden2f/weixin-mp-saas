@@ -1,9 +1,9 @@
 package com.anyshare.service;
 
 import cn.hutool.core.util.RandomUtil;
-import com.anyshare.jpa.po.BasePO;
-import com.anyshare.jpa.po.ShareResourcePO;
-import com.anyshare.jpa.po.WxMpNewsArticlePO;
+import com.anyshare.jpa.mysql.po.BasePO;
+import com.anyshare.jpa.mysql.po.ShareResourcePO;
+import com.anyshare.jpa.mysql.po.WxMpNewsArticlePO;
 import com.anyshare.service.common.ShareResourceService;
 import com.anyshare.service.common.WxMpNewsArticleService;
 import lombok.extern.slf4j.Slf4j;

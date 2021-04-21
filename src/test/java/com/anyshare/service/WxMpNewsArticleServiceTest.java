@@ -1,7 +1,7 @@
 package com.anyshare.service;
 
 import com.anyshare.enums.AppTag;
-import com.anyshare.jpa.po.WxMpNewsArticlePO;
+import com.anyshare.jpa.mysql.po.WxMpNewsArticlePO;
 import com.anyshare.service.common.WxMpNewsArticleService;
 import org.junit.jupiter.api.Test;
 import org.springframework.boot.test.context.SpringBootTest;

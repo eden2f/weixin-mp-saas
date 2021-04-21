@@ -1,10 +1,10 @@
 package com.anyshare.service.common;
 
-import com.anyshare.jpa.po.ShareResourcePO;
-import com.anyshare.jpa.repository.ShareResourceRepository;
 import com.anyshare.enums.ResourceType;
 import com.anyshare.service.eventdriven.event.ResourceAddEvent;
 import com.anyshare.service.eventdriven.event.ResourceUpdateEvent;
+import com.anyshare.jpa.mysql.po.ShareResourcePO;
+import com.anyshare.jpa.mysql.repository.ShareResourceRepository;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.BeanUtils;
 import org.springframework.context.ApplicationContext;

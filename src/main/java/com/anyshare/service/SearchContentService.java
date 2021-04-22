@@ -7,7 +7,7 @@ import org.springframework.data.domain.Page;
 import java.util.List;
 
 /**
- * @author huangminpeng
+ * @author Eden
  * @date 2021/4/7 12:13
  */
 public interface SearchContentService {

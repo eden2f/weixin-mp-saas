@@ -1,10 +1,10 @@
 package com.anyshare.service.common;
 
 import com.anyshare.enums.ResourceType;
-import com.anyshare.service.eventdriven.event.ResourceAddEvent;
-import com.anyshare.service.eventdriven.event.ResourceUpdateEvent;
 import com.anyshare.jpa.mysql.po.ShareResourcePO;
 import com.anyshare.jpa.mysql.repository.ShareResourceRepository;
+import com.anyshare.service.eventdriven.event.ResourceAddEvent;
+import com.anyshare.service.eventdriven.event.ResourceUpdateEvent;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.BeanUtils;
 import org.springframework.context.ApplicationContext;
@@ -45,7 +45,7 @@ public class ShareResourceServiceImpl implements ShareResourceService {
             applicationEvent = new ResourceUpdateEvent(shareResource.getId(), ResourceType.SHARE_RESOURCE);
         }
         shareResourceRepository.save(shareResource);
-        if(applicationEvent == null){
+        if (applicationEvent == null) {
             applicationEvent = new ResourceAddEvent(shareResource.getId(), ResourceType.SHARE_RESOURCE);
         }
         applicationContext.publishEvent(applicationEvent);

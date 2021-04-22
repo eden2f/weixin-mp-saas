@@ -15,12 +15,13 @@ import org.springframework.data.elasticsearch.core.SearchHits;
 import org.springframework.data.elasticsearch.core.query.NativeSearchQuery;
 import org.springframework.stereotype.Service;
 import org.springframework.util.Assert;
+
 import javax.annotation.Resource;
 import java.util.List;
 import java.util.stream.Collectors;
 
 /**
- * @author huangminpeng
+ * @author Eden
  * @date 2021/4/7 12:13
  */
 @Slf4j
@@ -35,7 +36,6 @@ public class SearchContentServiceImpl implements SearchContentService {
     @Override
     public void save(List<SearchContentPO> searchContents) {
         searchContentRepository.saveAll(searchContents);
-
     }
 
     @Override

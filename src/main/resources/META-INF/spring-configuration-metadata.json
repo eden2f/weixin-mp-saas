@@ -24,6 +24,16 @@
       "name": "elasticsearch.hostAndPort",
       "type": "java.lang.String",
       "description": "Description for elasticsearch.hostAndPort."
+    },
+    {
+      "name": "elasticsearch.username",
+      "type": "java.lang.String",
+      "description": "Description for elasticsearch.username."
+    },
+    {
+      "name": "elasticsearch.password",
+      "type": "java.lang.String",
+      "description": "Description for elasticsearch.password."
     }
   ]
 }

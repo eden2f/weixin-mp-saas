@@ -12,7 +12,7 @@ import static com.anyshare.jpa.es.po.SearchContentPO.ES_INDEX_PREFIX;
 import static com.anyshare.jpa.es.po.SearchContentPO.ES_SEARCH_CONTENT;
 
 /**
- * @author huangminpeng
+ * @author Eden
  * @date 2021/4/7 10:51
  */
 @Data
@@ -25,16 +25,16 @@ public class SearchContentPO implements Serializable {
     @Id
     private Long id;
 
-    @Field(type = FieldType.Text, store = true)
+    @Field(type = FieldType.Text)
     private String appTag;
 
-    @Field(store = true, searchAnalyzer = "ik_smart", analyzer = "ik_max_word", type = FieldType.Text)
+    @Field(searchAnalyzer = "ik_smart", analyzer = "ik_max_word", type = FieldType.Text)
     private String title;
 
-    @Field(store = true, searchAnalyzer = "ik_smart", analyzer = "ik_max_word", type = FieldType.Text)
+    @Field(searchAnalyzer = "ik_smart", analyzer = "ik_max_word", type = FieldType.Text)
     private String digest;
 
-    @Field(store = true, searchAnalyzer = "ik_smart", analyzer = "ik_max_word", type = FieldType.Text)
+    @Field(searchAnalyzer = "ik_smart", analyzer = "ik_max_word", type = FieldType.Text)
     private String content;
 
     public static SearchContentPO create() {

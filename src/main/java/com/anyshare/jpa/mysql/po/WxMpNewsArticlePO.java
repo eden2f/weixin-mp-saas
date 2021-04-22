@@ -28,11 +28,12 @@ public class WxMpNewsArticlePO extends BasePO {
     /**
      * 作者
      */
+    @Column(length = 256)
     private String author;
     /**
      * 图文消息的标题
      */
-    @Column
+    @Column(length = 256)
     private String title;
     /**
      * 图文消息的原文地址，即点击“阅读原文”后的URL
@@ -64,9 +65,10 @@ public class WxMpNewsArticlePO extends BasePO {
     /**
      * content的md5值用于判断是否需要更新
      */
+    @Column(length = 256)
     private String contentMd5;
 
-    @Column
+    @Column(length = 256)
     private String appTag;
 
     @Override

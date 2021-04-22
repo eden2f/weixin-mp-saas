@@ -12,12 +12,11 @@ import org.springframework.stereotype.Component;
  */
 @Slf4j
 @Component
-public class ResourceAddEventListener implements ApplicationListener<ResourceAddEvent> {
+public class ResourceAddEventListener extends BaseEventListener implements ApplicationListener<ResourceAddEvent> {
 
-
-    @Async(value= "taskExecutor")
     @Override
+//    @Async(value = "taskExecutor")
     public void onApplicationEvent(ResourceAddEvent resourceAddEvent) {
-        log.info("接收到 resourceUpdateEvent = {}", resourceAddEvent);
+        super.pushContentToEs(resourceAddEvent.getId(), resourceAddEvent.getResourceType());
     }
 }

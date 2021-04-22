@@ -34,6 +34,11 @@ public class ShareResourceServiceImpl implements ShareResourceService {
     }
 
     @Override
+    public Optional<ShareResourcePO> findTopByAppTagAndName(String appTag, String name) {
+        return shareResourceRepository.findTopByAppTagAndName(appTag, name);
+    }
+
+    @Override
     public Long insert(String appTag, ShareResourcePO shareResource) {
         shareResource.setAppTag(appTag);
         Optional<ShareResourcePO> optional = shareResourceRepository.findTopByAppTagAndName(appTag, shareResource.getName());

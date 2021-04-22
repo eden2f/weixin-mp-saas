@@ -2,7 +2,7 @@ package com.anyshare.service;
 
 import com.anyshare.enums.AppTag;
 import com.anyshare.jpa.es.po.SearchContentPO;
-import org.springframework.data.domain.Page;
+import org.springframework.data.elasticsearch.core.SearchHits;
 
 import java.util.List;
 
@@ -16,8 +16,9 @@ public interface SearchContentService {
 
     void save(SearchContentPO bean);
 
+    void saveOrUpdate(SearchContentPO searchContent);
+
     List<SearchContentPO> findByTitle(String title);
 
-    List<SearchContentPO> findByTitleOrDigestOrContent(AppTag appTag, String text);
-
+    SearchHits<SearchContentPO> findByTitleOrDigestOrContent(String appTag, String searchKey);
 }

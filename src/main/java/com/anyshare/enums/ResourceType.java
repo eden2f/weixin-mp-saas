@@ -14,8 +14,10 @@ import lombok.ToString;
 public enum ResourceType {
 
     /**
-     * 资源类型(0: 微信公众号图文; 1: 分享内容)
+     * 资源类型(0: 测试; 1: 微信公众号图文; 2: 分享内容)
      */
+    TEST(0),
+
     WEIXIN_ARTICLE(0),
 
     SHARE_RESOURCE(1);

@@ -89,6 +89,23 @@
             <version>5.5.1</version>
         </dependency>
 
+        <!--        <dependency>-->
+        <!--            <groupId>org.markdownj</groupId>-->
+        <!--            <artifactId>markdownj-core</artifactId>-->
+        <!--            <version>0.4</version>-->
+        <!--        </dependency>-->
+        <dependency>
+            <groupId>io.github.furstenheim</groupId>
+            <artifactId>copy_down</artifactId>
+            <version>1.0</version>
+        </dependency>
+
+        <dependency>
+            <groupId>org.apache.commons</groupId>
+            <artifactId>commons-text</artifactId>
+            <version>1.9</version>
+        </dependency>
+
         <dependency>
             <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-starter-test</artifactId>

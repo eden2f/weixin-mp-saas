@@ -20,7 +20,7 @@ import javax.persistence.*;
         indexes = {@Index(columnList = "appTag"), @Index(columnList = "name")})
 public class ShareResourcePO extends BasePO {
 
-    @Column(nullable = false)
+    @Column(nullable = false, length = 256)
     private String name;
 
     @Column(nullable = false)
@@ -29,7 +29,7 @@ public class ShareResourcePO extends BasePO {
     @Column(nullable = false)
     private String weixinPushContent;
 
-    @Column
+    @Column(length = 256)
     private String appTag;
 
     @Override

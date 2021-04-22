@@ -1,7 +1,6 @@
 package com.anyshare.service;
 
-import cn.hutool.core.util.RandomUtil;
-import com.anyshare.jpa.mysql.po.BasePO;
+import com.anyshare.jpa.es.po.SearchContentPO;
 import com.anyshare.jpa.mysql.po.ShareResourcePO;
 import com.anyshare.jpa.mysql.po.WxMpNewsArticlePO;
 import com.anyshare.service.common.ShareResourceService;
@@ -20,11 +19,15 @@ import me.chanjar.weixin.mp.builder.outxml.NewsBuilder;
 import me.chanjar.weixin.mp.builder.outxml.TextBuilder;
 import org.apache.commons.collections4.CollectionUtils;
 import org.springframework.beans.BeanUtils;
+import org.springframework.data.elasticsearch.core.SearchHit;
+import org.springframework.data.elasticsearch.core.SearchHits;
 import org.springframework.stereotype.Service;
 
 import javax.annotation.Resource;
-import java.util.ArrayList;
+import javax.validation.constraints.NotNull;
+import java.text.DecimalFormat;
 import java.util.List;
+import java.util.Optional;
 
 /**
  * @author Eden
@@ -38,13 +41,23 @@ public class WeixinServiceImpl implements WeixinService {
     private ShareResourceService shareResourceService;
     @Resource
     private WxMpNewsArticleService wxMpNewsArticleService;
+    @Resource
+    private SearchContentService searchContentService;
+
+    private final static DecimalFormat scoreDecimalFormat = new DecimalFormat(".00");
 
     @Override
     public WxMpXmlOutMessage handle(String appTag, WxMpXmlMessage inMessage) {
         log.info("appTag = {}, inMessage = {}", appTag, inMessage);
         String keyword = inMessage.getContent().trim();
-        List<BasePO> pos = searchByKeyword(appTag, keyword);
-        BaseBuilder wxMpXmlOutMessageBuilder = getWxMpXmlOutMessageBuilder(keyword, pos);
+        Optional<Object> preciseQueryOptional = preciseQueryByKeyword(appTag, keyword);
+        BaseBuilder wxMpXmlOutMessageBuilder;
+        if (preciseQueryOptional.isPresent()) {
+            wxMpXmlOutMessageBuilder = getWxMpXmlOutMessageBuilder(keyword, preciseQueryOptional.get());
+        } else {
+            List<SearchHit<SearchContentPO>> searchHits = searchByKeyword(appTag, keyword);
+            wxMpXmlOutMessageBuilder = getWxMpXmlOutMessageBuilder(keyword, searchHits);
+        }
         wxMpXmlOutMessageBuilder.fromUser(inMessage.getToUser());
         wxMpXmlOutMessageBuilder.toUser(inMessage.getFromUser());
         WxMpXmlOutMessage outMessage = (WxMpXmlOutMessage) wxMpXmlOutMessageBuilder.build();
@@ -52,17 +65,80 @@ public class WeixinServiceImpl implements WeixinService {
         return outMessage;
     }
 
-    private List<BasePO> searchByKeyword(String appTag, String keyword) {
-        List<ShareResourcePO> shareResources = shareResourceService.findTop6ByNameContaining(appTag, keyword);
-        List<BasePO> pos = new ArrayList<>(shareResources);
-        List<WxMpNewsArticlePO> wxMpNewsArticles = wxMpNewsArticleService.findTop6ByTitleContaining(appTag, keyword);
-        pos.addAll(wxMpNewsArticles);
-        return RandomUtil.randomEleList(pos, 6);
+    /**
+     * es全文检索
+     *
+     * @param appTag  应用标识
+     * @param keyword 关键词
+     * @return 检索到的内容
+     */
+    private List<SearchHit<SearchContentPO>> searchByKeyword(String appTag, String keyword) {
+        SearchHits<SearchContentPO> searchHits = searchContentService.findByTitleOrDigestOrContent(appTag, keyword);
+        return searchHits.getSearchHits();
     }
 
-    private BaseBuilder getWxMpXmlOutMessageBuilder(String keyword, List<BasePO> objects) {
+    /**
+     * 精确查询
+     *
+     * @param appTag  应用标识
+     * @param keyword 关键词
+     * @return 精确匹配到的内容
+     */
+    @SuppressWarnings("unchecked")
+    private Optional<Object> preciseQueryByKeyword(String appTag, String keyword) {
+        Optional<ShareResourcePO> shareResourceOptional = shareResourceService.findTopByAppTagAndName(appTag, keyword);
+        if (shareResourceOptional.isPresent()) {
+            return Optional.of(shareResourceOptional.get());
+        }
+        Optional<WxMpNewsArticlePO> wxMpNewsArticleOptional = wxMpNewsArticleService.findTopByTitle(appTag, keyword);
+        if (wxMpNewsArticleOptional.isPresent()) {
+            WxMpNewsArticlePO wxMpNewsArticle = wxMpNewsArticleOptional.get();
+            return Optional.of(wxMpNewsArticle);
+        } else {
+            return Optional.empty();
+        }
+    }
+
+
+    private BaseBuilder getWxMpXmlOutMessageBuilder(String keyword, @NotNull Object object) {
         BaseBuilder builder;
-        if (CollectionUtils.isEmpty(objects)) {
+        if (object instanceof ShareResourcePO) {
+            ShareResourcePO shareResource = (ShareResourcePO) object;
+            //  关键词 ： %s
+            //  —— —— —— —— —— ——
+            //  资源 : %s
+            //  —— —— —— —— —— ——
+            //  %s
+            String format = "关键词 ： %s\n" +
+                    "—— —— —— —— —— ——\n" +
+                    "资源 : %s\n" +
+                    "—— —— —— —— —— ——\n" +
+                    "%s";
+            String resultMsg = String.format(format, keyword, shareResource.getName(), shareResource.getContent());
+            TextBuilder textBuilder = WxMpXmlOutMessage.TEXT();
+            textBuilder.content(resultMsg);
+            builder = textBuilder;
+        } else if (object instanceof WxMpNewsArticlePO) {
+            WxMpNewsArticlePO wxMpNewsArticle = (WxMpNewsArticlePO) object;
+            NewsBuilder newsBuilder = WxMpXmlOutMessage.NEWS();
+            WxMpXmlOutNewsMessage.Item item = new WxMpXmlOutNewsMessage.Item();
+            item.setDescription(wxMpNewsArticle.getDigest());
+            item.setPicUrl(wxMpNewsArticle.getThumbUrl());
+            item.setTitle(wxMpNewsArticle.getTitle());
+            item.setUrl(wxMpNewsArticle.getUrl());
+            newsBuilder.addArticle(item);
+            builder = newsBuilder;
+        } else {
+            throw new RuntimeException("错误的对象类型");
+        }
+
+        return builder;
+    }
+
+
+    private BaseBuilder getWxMpXmlOutMessageBuilder(String keyword, List<SearchHit<SearchContentPO>> searchHits) {
+        BaseBuilder builder;
+        if (CollectionUtils.isEmpty(searchHits)) {
 
             //  关键词 ： %s
             //  —— —— —— —— —— ——
@@ -76,70 +152,29 @@ public class WeixinServiceImpl implements WeixinService {
             textBuilder.content(resultMsg);
             builder = textBuilder;
         } else {
-            if (CollectionUtils.size(objects) > 1) {
-                //  关键词 ： %s
-                //  —— —— —— —— —— ——
-                //  匹配的资源(最多显示6条)
-                //  —— —— —— —— —— ——
-                //  1. %s
-                //  2. %s
-                String contentFormat = "关键词 ： %s\n" +
-                        "—— —— —— —— —— ——\n" +
-                        "匹配的资源(最多显示6条)\n" +
-                        "—— —— —— —— —— ——\n";
-                StringBuilder resultMsg = new StringBuilder(String.format(contentFormat, keyword));
-                for (int i = 0; i < objects.size(); i++) {
-                    Object object = objects.get(i);
-                    String itemFormat = "%s. %s\n";
-                    String title;
-                    if (object instanceof ShareResourcePO) {
-                        ShareResourcePO shareResource = (ShareResourcePO) object;
-                        title = shareResource.getName();
-                    } else if (object instanceof WxMpNewsArticlePO) {
-                        WxMpNewsArticlePO wxMpNewsArticle = (WxMpNewsArticlePO) object;
-                        title = wxMpNewsArticle.getTitle();
-                    } else {
-                        throw new RuntimeException("错误的对象类型");
-                    }
-                    String itemContent = String.format(itemFormat, i + 1, title);
-                    resultMsg.append(itemContent);
-                }
-                TextBuilder textBuilder = WxMpXmlOutMessage.TEXT();
-                textBuilder.content(resultMsg.toString());
-                builder = textBuilder;
-            } else {
-                Object object = objects.get(0);
-                if (object instanceof ShareResourcePO) {
-                    ShareResourcePO shareResource = (ShareResourcePO) object;
-                    //  关键词 ： %s
-                    //  —— —— —— —— —— ——
-                    //  资源 : %s
-                    //  —— —— —— —— —— ——
-                    //  %s
-                    String format = "关键词 ： %s\n" +
-                            "—— —— —— —— —— ——\n" +
-                            "资源 : %s\n" +
-                            "—— —— —— —— —— ——\n" +
-                            "%s";
-                    String resultMsg = String.format(format, keyword, shareResource.getName(), shareResource.getContent());
-                    TextBuilder textBuilder = WxMpXmlOutMessage.TEXT();
-                    textBuilder.content(resultMsg);
-                    builder = textBuilder;
-                } else if (object instanceof WxMpNewsArticlePO) {
-                    WxMpNewsArticlePO wxMpNewsArticle = (WxMpNewsArticlePO) object;
-                    NewsBuilder newsBuilder = WxMpXmlOutMessage.NEWS();
-                    WxMpXmlOutNewsMessage.Item item = new WxMpXmlOutNewsMessage.Item();
-                    item.setDescription(wxMpNewsArticle.getDigest());
-                    item.setPicUrl(wxMpNewsArticle.getThumbUrl());
-                    item.setTitle(wxMpNewsArticle.getTitle());
-                    item.setUrl(wxMpNewsArticle.getUrl());
-                    newsBuilder.addArticle(item);
-                    builder = newsBuilder;
-                } else {
-                    throw new RuntimeException("错误的对象类型");
-                }
+            //  关键词 ： %s
+            //  —— —— —— —— —— ——
+            //  匹配的资源(最多显示6条)
+            //  —— —— —— —— —— ——
+            //  1. %s
+            //  2. %s
+            String contentFormat = "关键词 ： %s\n" +
+                    "—— —— —— —— —— ——\n" +
+                    "相关度 : 资源名称(最多6条)\n" +
+                    "—— —— —— —— —— ——\n";
+            StringBuilder resultMsg = new StringBuilder(String.format(contentFormat, keyword));
+            for (SearchHit<SearchContentPO> searchHit : searchHits) {
+                String itemFormat = "%s : %s\n";
+                String title;
+                SearchContentPO searchContent = searchHit.getContent();
+                title = searchContent.getTitle();
+                String scoreStr = scoreDecimalFormat.format(searchHit.getScore());
+                String itemContent = String.format(itemFormat, scoreStr, title);
+                resultMsg.append(itemContent);
             }
-
+            TextBuilder textBuilder = WxMpXmlOutMessage.TEXT();
+            textBuilder.content(resultMsg.toString());
+            builder = textBuilder;
         }
         return builder;
     }

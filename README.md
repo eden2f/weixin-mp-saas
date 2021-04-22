@@ -5,6 +5,7 @@
 
 * 支持多个微信公众号配置
 * 动态更新配置
+* 自建搜索引擎全文检索
 
 本项目仍在不断迭代开发中,遇到问题请提 issues , 谢谢配合. 
 
@@ -46,11 +47,53 @@ java -jar weixin-mp-saas.jar
     * mysql.host 默认是 127.0.0.1:3306
     * mysql.username 默认是 root
     * mysql.password 默认是 toor
-    * mysql.database.name 数据库名称 weixin_mp_saas
+    * mysql.database.name 数据库名称, 默认是 : weixin_mp_saas
+    * elasticsearch.hostAndPort es服务的 ip + 端口 , 默认是 : 127.0.0.1:9200
+    * elasticsearch.username es服务用户名, 默认是 ""
+    * elasticsearch.password es服务密码, 默认是 "" 
 
 ```shell
-java -jar -Dserver.port=8080 -Dmysql.host=localhost:3306 -Dmysql.username=root -Dmysql.password=toor -Dmysql.database.name=weixin_mp_saas weixin-mp-saas.jar
+java -jar -Dserver.port=8080 -Dmysql.host=localhost:3306 -Dmysql.username=root -Dmysql.password=toor -Dmysql.database.name=weixin_mp_saas -Delasticsearch.hostAndPort=127.0.0.1:9200 weixin-mp-saas.jar
 ```
+
+* 提前创建好 ElasticSearch 索引及映射文件
+    * 创建索引
+        ```shell script
+        curl --location --request PUT 'http://127.0.0.1:9200/weixin_mp_saas_search_content'
+        ```
+    * 创建映射文件
+        ```
+        curl --location --request POST 'http://127.0.0.1:9200/weixin_mp_saas_search_content/_mapping' \
+        --header 'Content-Type: application/json' \
+        --data-raw '{	
+            "properties": {
+                "appTag": {
+                    "type": "keyword"
+                },
+                "resourceType": {
+                    "type": "keyword"
+                },
+                "originalId": {
+                    "type": "keyword"
+                },
+                "title": {
+                    "type": "text",
+                    "analyzer": "ik_max_word",
+                    "search_analyzer": "ik_smart"
+                },
+                "digest": {
+                    "type": "text",
+                    "analyzer": "ik_max_word",
+                    "search_analyzer": "ik_smart"
+                },
+                "content": {
+                    "type": "text",
+                    "analyzer": "ik_max_word",
+                    "search_analyzer": "ik_smart"
+                }
+            }
+        }'
+        ```
 
 ### 使用说明
 

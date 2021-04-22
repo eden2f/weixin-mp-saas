@@ -2,11 +2,17 @@ package com.anyshare.service;
 
 import cn.hutool.core.util.RandomUtil;
 import com.anyshare.enums.AppTag;
+import com.anyshare.enums.ResourceType;
 import com.anyshare.jpa.es.po.SearchContentPO;
+import com.anyshare.jpa.mysql.po.WxMpNewsArticlePO;
+import com.anyshare.jpa.mysql.repository.WxMpNewsArticleRepository;
+import com.anyshare.service.eventdriven.event.ResourceAddEvent;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.collections4.CollectionUtils;
 import org.junit.jupiter.api.Test;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.context.ApplicationContext;
+import org.springframework.data.elasticsearch.core.SearchHits;
 import org.springframework.util.Assert;
 
 import javax.annotation.Resource;
@@ -23,6 +29,19 @@ class SearchContentServiceImplTest {
 
     @Resource
     private SearchContentService searchContentService;
+    @Resource
+    private WxMpNewsArticleRepository wxMpNewsArticleRepository;
+    @Resource
+    private ApplicationContext applicationContext;
+
+    @Test
+    public void initFromMySql() {
+        List<WxMpNewsArticlePO> articles = wxMpNewsArticleRepository.findAll();
+        for (WxMpNewsArticlePO article : articles) {
+            ResourceAddEvent applicationEvent = new ResourceAddEvent(article.getId(), ResourceType.WEIXIN_ARTICLE);
+            applicationContext.publishEvent(applicationEvent);
+        }
+    }
 
     @Test
     void save() {
@@ -45,11 +64,13 @@ class SearchContentServiceImplTest {
             int i2 = RandomUtil.randomInt(contents.length);
             // 注意这里,第一个参数是id,所以无论你运行多少次,都只会添加100条数据,如果id存在es更新,不存在添加
             SearchContentPO searchContent = SearchContentPO.create();
-            searchContent.setId((long) i);
+            searchContent.setId(RandomUtil.randomStringUpper(8));
+            searchContent.setOriginalId((long) i);
             searchContent.setTitle(titles[i1]);
             searchContent.setDigest(titles[i % titles.length]);
             searchContent.setContent(contents[i2]);
             searchContent.setAppTag(AppTag.Test.getCode());
+            searchContent.setResourceType(ResourceType.WEIXIN_ARTICLE.getCode());
             list.add(searchContent);
         }
         searchContentService.save(list);
@@ -57,6 +78,19 @@ class SearchContentServiceImplTest {
 
     @Test
     void testSave() {
+    }
+
+    @Test
+    void testSaveOrUpdate() {
+        SearchContentPO searchContent = SearchContentPO.create();
+        searchContent.setId(null);
+        searchContent.setOriginalId(RandomUtil.randomLong(Integer.MAX_VALUE));
+        searchContent.setTitle(RandomUtil.randomStringUpper(10));
+        searchContent.setDigest(RandomUtil.randomStringUpper(50));
+        searchContent.setContent(RandomUtil.randomStringUpper(100));
+        searchContent.setAppTag(AppTag.Test.getCode());
+        searchContent.setResourceType(ResourceType.WEIXIN_ARTICLE.getCode());
+        searchContentService.saveOrUpdate(searchContent);
     }
 
     @Test
@@ -68,8 +102,7 @@ class SearchContentServiceImplTest {
 
     @Test
     void findByTitleOrDigestOrContent() {
-        List<SearchContentPO> searchContentPage = searchContentService.findByTitleOrDigestOrContent(AppTag.Test, "我");
-        Assert.isTrue(CollectionUtils.isNotEmpty(searchContentPage), "findByTitleOrDigestOrContent");
-        log.info("searchContents = {}", searchContentPage);
+        SearchHits<SearchContentPO> searchHits = searchContentService.findByTitleOrDigestOrContent(AppTag.AnyShare.getCode(), "的");
+        Assert.isTrue(CollectionUtils.isNotEmpty(searchHits.getSearchHits()), "findByTitleOrDigestOrContent");
     }
 }

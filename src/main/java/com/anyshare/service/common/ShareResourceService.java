@@ -3,6 +3,7 @@ package com.anyshare.service.common;
 import com.anyshare.jpa.mysql.po.ShareResourcePO;
 
 import java.util.List;
+import java.util.Optional;
 
 /**
  * @author Eden
@@ -10,7 +11,9 @@ import java.util.List;
  */
 public interface ShareResourceService {
 
-    List<ShareResourcePO> findTop6ByNameContaining(String appTag, String keyword);
+    List<ShareResourcePO> findTop6ByNameContaining(String appTag, String name);
+
+    Optional<ShareResourcePO> findTopByAppTagAndName(String appTag, String name);
 
     Long insert(String appTag, ShareResourcePO shareResource);
 }

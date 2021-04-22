@@ -1,8 +1,12 @@
 package com.anyshare.service.eventdriven.event;
 
 import com.anyshare.enums.ResourceType;
-import lombok.*;
+import lombok.Getter;
+import lombok.Setter;
+import lombok.ToString;
 import org.springframework.context.ApplicationEvent;
+
+import javax.validation.constraints.NotNull;
 
 /**
  * @author : Eden
@@ -17,7 +21,7 @@ public class ResourceAddEvent extends ApplicationEvent {
 
     private ResourceType resourceType;
 
-    public ResourceAddEvent(Long id, ResourceType resourceType) {
+    public ResourceAddEvent(@NotNull Long id, @NotNull ResourceType resourceType) {
         super(String.format("%s_%s", id, resourceType));
         this.id = id;
         this.resourceType = resourceType;

@@ -23,15 +23,21 @@ public class SearchContentPO implements Serializable {
     public static final String ES_SEARCH_CONTENT = "search_content";
 
     @Id
-    private Long id;
+    private String id;
 
-    @Field(type = FieldType.Text)
+    @Field(type = FieldType.Keyword)
     private String appTag;
 
-    @Field(searchAnalyzer = "ik_smart", analyzer = "ik_max_word", type = FieldType.Text)
+    @Field(type = FieldType.Integer)
+    private Integer resourceType;
+
+    @Field(type = FieldType.Long)
+    private Long originalId;
+
+    @Field(searchAnalyzer = "ik_max_word", analyzer = "ik_max_word", type = FieldType.Text)
     private String title;
 
-    @Field(searchAnalyzer = "ik_smart", analyzer = "ik_max_word", type = FieldType.Text)
+    @Field(searchAnalyzer = "ik_max_word", analyzer = "ik_max_word", type = FieldType.Text)
     private String digest;
 
     @Field(searchAnalyzer = "ik_smart", analyzer = "ik_max_word", type = FieldType.Text)
@@ -39,7 +45,10 @@ public class SearchContentPO implements Serializable {
 
     public static SearchContentPO create() {
         SearchContentPO searchContent = new SearchContentPO();
-        searchContent.setId(0L);
+        searchContent.setId("");
+        searchContent.setAppTag("");
+        searchContent.setOriginalId(0L);
+        searchContent.setResourceType(0);
         searchContent.setTitle("");
         searchContent.setDigest("");
         searchContent.setContent("");

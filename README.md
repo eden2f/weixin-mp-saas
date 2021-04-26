@@ -21,7 +21,7 @@
 
 本项目基于 Spring Boot 构建, 对接微信公众号Api.
 
-![微信公众号示例](docs/imgs/WeixinMPSaaS组件图.png)
+![微信公众号示例](docs/imgs/WeixinMPSaaS.png)
 
 ### 安装教程
 

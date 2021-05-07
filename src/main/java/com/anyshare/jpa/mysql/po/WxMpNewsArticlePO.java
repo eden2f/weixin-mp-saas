@@ -50,7 +50,7 @@ public class WxMpNewsArticlePO extends BasePO {
      * 图文消息的摘要，仅有单图文消息才有摘要，多图文此处为空
      */
     @Lob
-    @Column(columnDefinition="TEXT")
+    @Column(columnDefinition="LONGTEXT")
     private String digest;
     /**
      * 是否显示封面，0为false，即不显示，1为true，即显示

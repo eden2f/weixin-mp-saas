@@ -1,6 +1,5 @@
 package com.anyshare.service;
 
-import com.anyshare.enums.AppTag;
 import com.anyshare.jpa.es.po.SearchContentPO;
 import org.springframework.data.elasticsearch.core.SearchHits;
 

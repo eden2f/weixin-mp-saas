@@ -1,10 +1,13 @@
 package com.anyshare.service;
 
+import com.anyshare.enums.ResourceType;
+import com.anyshare.exception.ServiceException;
 import com.anyshare.jpa.es.po.SearchContentPO;
 import com.anyshare.jpa.mysql.po.ShareResourcePO;
 import com.anyshare.jpa.mysql.po.WxMpNewsArticlePO;
 import com.anyshare.service.common.ShareResourceService;
 import com.anyshare.service.common.WxMpNewsArticleService;
+import com.anyshare.service.eventdriven.event.ResourceUpdateEvent;
 import lombok.extern.slf4j.Slf4j;
 import me.chanjar.weixin.common.error.WxErrorException;
 import me.chanjar.weixin.mp.api.WxMpMaterialService;
@@ -19,6 +22,8 @@ import me.chanjar.weixin.mp.builder.outxml.NewsBuilder;
 import me.chanjar.weixin.mp.builder.outxml.TextBuilder;
 import org.apache.commons.collections4.CollectionUtils;
 import org.springframework.beans.BeanUtils;
+import org.springframework.context.ApplicationContext;
+import org.springframework.data.domain.Page;
 import org.springframework.data.elasticsearch.core.SearchHit;
 import org.springframework.data.elasticsearch.core.SearchHits;
 import org.springframework.stereotype.Service;
@@ -28,6 +33,7 @@ import javax.validation.constraints.NotNull;
 import java.text.DecimalFormat;
 import java.util.List;
 import java.util.Optional;
+import java.util.concurrent.locks.ReentrantLock;
 
 /**
  * @author Eden
@@ -43,6 +49,10 @@ public class WeixinServiceImpl implements WeixinService {
     private WxMpNewsArticleService wxMpNewsArticleService;
     @Resource
     private SearchContentService searchContentService;
+    @Resource
+    private ApplicationContext applicationContext;
+
+    private ReentrantLock reindexEsContentLock = new ReentrantLock();
 
     private final static DecimalFormat scoreDecimalFormat = new DecimalFormat(".00");
 
@@ -200,6 +210,32 @@ public class WeixinServiceImpl implements WeixinService {
                 }
             }
             startIndex += size;
+        }
+    }
+
+    @Override
+    public void reindexEsContent(String appTag) {
+        if (reindexEsContentLock.tryLock()) {
+            try {
+                int pageNum = 0;
+                int pageSize = 10;
+                Page<WxMpNewsArticlePO> page;
+                do {
+                    pageNum++;
+                    page = wxMpNewsArticleService.page(pageNum, pageSize);
+                    List<WxMpNewsArticlePO> wxMpNewsArticles = page.getContent();
+                    if (CollectionUtils.isNotEmpty(wxMpNewsArticles)) {
+                        for (WxMpNewsArticlePO wxMpNewsArticle : wxMpNewsArticles) {
+                            ResourceUpdateEvent resourceUpdateEvent = new ResourceUpdateEvent(wxMpNewsArticle.getId(), ResourceType.WEIXIN_ARTICLE);
+                            applicationContext.publishEvent(resourceUpdateEvent);
+                        }
+                    }
+                } while (!page.isEmpty());
+            } finally {
+                reindexEsContentLock.unlock();
+            }
+        } else {
+            throw new ServiceException("服务器忙不过来了,请稍后再试!");
         }
     }
 }

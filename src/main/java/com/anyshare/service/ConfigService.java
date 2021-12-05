@@ -2,6 +2,7 @@ package com.anyshare.service;
 
 import com.anyshare.web.dto.weixin.OpenapiConfigAddReq;
 import com.anyshare.web.dto.weixin.OpenapiConfigUpdateReq;
+import com.anyshare.web.dto.weixin.OpenapiReindexSearchContentReq;
 
 /**
  * @author Eden
@@ -12,4 +13,6 @@ public interface ConfigService {
     void openapiConfigAdd(OpenapiConfigAddReq req);
 
     void openapiConfigUpdate(OpenapiConfigUpdateReq req);
+
+    void reindexSearchContent(OpenapiReindexSearchContentReq req);
 }

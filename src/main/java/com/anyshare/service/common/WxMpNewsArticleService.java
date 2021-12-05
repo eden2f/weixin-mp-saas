@@ -1,6 +1,7 @@
 package com.anyshare.service.common;
 
 import com.anyshare.jpa.mysql.po.WxMpNewsArticlePO;
+import org.springframework.data.domain.Page;
 
 import java.util.List;
 import java.util.Optional;
@@ -16,4 +17,6 @@ public interface WxMpNewsArticleService {
     Optional<WxMpNewsArticlePO> findTopByTitle(String appTag, String title);
 
     Long insert(String appTag, WxMpNewsArticlePO wxMpNewsArticlePo);
+
+    Page<WxMpNewsArticlePO> page(int pageNum, int pageSize);
 }

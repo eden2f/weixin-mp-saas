@@ -6,6 +6,7 @@ import com.anyshare.service.common.AppOpenApiConfigService;
 import com.anyshare.web.config.WxMpConfig;
 import com.anyshare.web.dto.weixin.OpenapiConfigAddReq;
 import com.anyshare.web.dto.weixin.OpenapiConfigUpdateReq;
+import com.anyshare.web.dto.weixin.OpenapiReindexSearchContentReq;
 import lombok.extern.slf4j.Slf4j;
 import me.chanjar.weixin.common.error.WxErrorException;
 import me.chanjar.weixin.mp.api.WxMpMaterialService;
@@ -61,14 +62,7 @@ public class ConfigServiceImpl implements ConfigService {
      */
     @Override
     public void openapiConfigUpdate(OpenapiConfigUpdateReq req) {
-        AppOpenApiConfigPO appOpenApiConfig = appOpenApiConfigService.findByAppTag(req.getAppTag());
-        if (appOpenApiConfig == null) {
-            throw new ServiceException("appTag不存在");
-        }
-        // 0. 验证
-        if(!req.getOpenapiConfigVerify().getSecret().equals(appOpenApiConfig.getSecret())){
-            throw new ServiceException("openapiConfigVerify.secret不正确!");
-        }
+        AppOpenApiConfigPO appOpenApiConfig = checkSecretGetApiConfig(req.getAppTag(), req.getOpenapiConfigVerify().getSecret());
         // 1. 拉取历史文章(同时可以验证配置是否正确)
         WxMpDefaultConfigImpl wxMpConfig = new WxMpDefaultConfigImpl();
         BeanUtils.copyProperties(req, wxMpConfig);
@@ -80,13 +74,31 @@ public class ConfigServiceImpl implements ConfigService {
         WxMpConfig.addWxMpConfig(req.getAppTag(), appOpenApiConfig, wxMpService, wxMpConfig);
     }
 
-    private WxMpService materialNewsSynchronizer(String appTag, WxMpConfigStorage wxMpConfigStorage){
+    private AppOpenApiConfigPO checkSecretGetApiConfig(String appTag, String secret) {
+        AppOpenApiConfigPO appOpenApiConfig = appOpenApiConfigService.findByAppTag(appTag);
+        if (appOpenApiConfig == null) {
+            throw new ServiceException("appTag不存在");
+        }
+        // 0. 验证
+        if (!appOpenApiConfig.getSecret().equals(secret)) {
+            throw new ServiceException("openapiConfigVerify.secret不正确!");
+        }
+        return appOpenApiConfig;
+    }
+
+    @Override
+    public void reindexSearchContent(OpenapiReindexSearchContentReq req) {
+        checkSecretGetApiConfig(req.getAppTag(), req.getSecret());
+        weixinService.reindexEsContent(req.getAppTag());
+    }
+
+    private WxMpService materialNewsSynchronizer(String appTag, WxMpConfigStorage wxMpConfigStorage) {
         WxMpService wxMpService = new WxMpServiceImpl();
         wxMpService.setWxMpConfigStorage(wxMpConfigStorage);
         WxMpMaterialService wxMpMaterialService = wxMpService.getMaterialService();
-        try{
+        try {
             weixinService.materialNewsSynchronizer(appTag, wxMpMaterialService);
-        } catch (WxErrorException we){
+        } catch (WxErrorException we) {
             log.info(String.format("同步微信物料发生异常, %s", appTag), we);
             throw new ServiceException("请检查下微信公众配置有误,请稍后重试!");
         }

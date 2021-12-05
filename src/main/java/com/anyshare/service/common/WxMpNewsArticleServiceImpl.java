@@ -3,15 +3,17 @@ package com.anyshare.service.common;
 import cn.hutool.core.bean.BeanUtil;
 import cn.hutool.core.bean.copier.CopyOptions;
 import cn.hutool.crypto.digest.MD5;
+import com.anyshare.enums.DelStatus;
 import com.anyshare.enums.ResourceType;
-import com.anyshare.service.eventdriven.event.ResourceAddEvent;
-import com.anyshare.service.eventdriven.event.ResourceUpdateEvent;
 import com.anyshare.jpa.mysql.po.WxMpNewsArticlePO;
 import com.anyshare.jpa.mysql.repository.WxMpNewsArticleRepository;
+import com.anyshare.service.eventdriven.event.ResourceAddEvent;
+import com.anyshare.service.eventdriven.event.ResourceUpdateEvent;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.ApplicationEvent;
+import org.springframework.data.domain.*;
 import org.springframework.stereotype.Service;
 
 import javax.annotation.Resource;
@@ -59,10 +61,17 @@ public class WxMpNewsArticleServiceImpl implements WxMpNewsArticleService {
         wxMpNewsArticlePo.setAppTag(appTag);
         wxMpNewsArticlePo.setContentMd5(contentMd5);
         wxMpNewsArticleRepository.save(wxMpNewsArticlePo);
-        if(applicationEvent == null){
+        if (applicationEvent == null) {
             applicationEvent = new ResourceAddEvent(wxMpNewsArticlePo.getId(), ResourceType.WEIXIN_ARTICLE);
         }
         applicationContext.publishEvent(applicationEvent);
         return wxMpNewsArticlePo.getId();
+    }
+
+    @Override
+    public Page<WxMpNewsArticlePO> page(int pageNum, int pageSize) {
+        Pageable pageable = PageRequest.of(pageNum, pageSize, Sort.by(Sort.Order.asc("id")));
+        int delStatus = DelStatus.VALID.getCode();
+        return wxMpNewsArticleRepository.findPageBydelStatus(delStatus, pageable);
     }
 }

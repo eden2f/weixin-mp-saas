@@ -14,4 +14,6 @@ public interface WeixinService {
     WxMpXmlOutMessage handle(String appTag, WxMpXmlMessage inMessage);
 
     void materialNewsSynchronizer(String appTag, WxMpMaterialService wxMpMaterialService) throws WxErrorException;
+
+    void reindexEsContent(String appTag);
 }

@@ -4,6 +4,7 @@ import com.anyshare.service.ConfigService;
 import com.anyshare.web.dto.RetResult;
 import com.anyshare.web.dto.weixin.OpenapiConfigAddReq;
 import com.anyshare.web.dto.weixin.OpenapiConfigUpdateReq;
+import com.anyshare.web.dto.weixin.OpenapiReindexSearchContentReq;
 import lombok.extern.slf4j.Slf4j;
 import me.chanjar.weixin.common.error.WxErrorException;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -35,6 +36,13 @@ public class ConfigController {
     @PostMapping(value = "weixin/openapi/update")
     public RetResult<Void> openapiConfigUpdate(@Valid @RequestBody OpenapiConfigUpdateReq req) throws WxErrorException {
         configService.openapiConfigUpdate(req);
+        return RetResult.success();
+    }
+
+
+    @PostMapping(value = "weixin/reindex/Search")
+    public RetResult<Void> reindexSearchContent(@Valid @RequestBody OpenapiReindexSearchContentReq req) {
+        configService.reindexSearchContent(req);
         return RetResult.success();
     }
 }

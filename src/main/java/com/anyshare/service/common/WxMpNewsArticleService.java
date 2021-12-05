@@ -19,4 +19,6 @@ public interface WxMpNewsArticleService {
     Long insert(String appTag, WxMpNewsArticlePO wxMpNewsArticlePo);
 
     Page<WxMpNewsArticlePO> page(int pageNum, int pageSize);
+
+    List<WxMpNewsArticlePO> findByIds(List<Long> weixinArticleIds);
 }

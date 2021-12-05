@@ -10,13 +10,18 @@ import com.anyshare.jpa.mysql.repository.WxMpNewsArticleRepository;
 import com.anyshare.service.eventdriven.event.ResourceAddEvent;
 import com.anyshare.service.eventdriven.event.ResourceUpdateEvent;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.ApplicationEvent;
-import org.springframework.data.domain.*;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 
 import javax.annotation.Resource;
+import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
 
@@ -73,5 +78,13 @@ public class WxMpNewsArticleServiceImpl implements WxMpNewsArticleService {
         Pageable pageable = PageRequest.of(pageNum, pageSize, Sort.by(Sort.Order.asc("id")));
         int delStatus = DelStatus.VALID.getCode();
         return wxMpNewsArticleRepository.findPageBydelStatus(delStatus, pageable);
+    }
+
+    @Override
+    public List<WxMpNewsArticlePO> findByIds(List<Long> weixinArticleIds) {
+        if (CollectionUtils.isNotEmpty(weixinArticleIds)) {
+            return wxMpNewsArticleRepository.findAllById(weixinArticleIds);
+        }
+        return Collections.emptyList();
     }
 }

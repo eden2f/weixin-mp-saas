@@ -3,6 +3,7 @@ package com.anyshare.service;
 import com.anyshare.enums.ResourceType;
 import com.anyshare.exception.ServiceException;
 import com.anyshare.jpa.es.po.SearchContentPO;
+import com.anyshare.jpa.mysql.po.BasePO;
 import com.anyshare.jpa.mysql.po.ShareResourcePO;
 import com.anyshare.jpa.mysql.po.WxMpNewsArticlePO;
 import com.anyshare.service.common.ShareResourceService;
@@ -32,8 +33,10 @@ import javax.annotation.Resource;
 import javax.validation.constraints.NotNull;
 import java.text.DecimalFormat;
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
 import java.util.concurrent.locks.ReentrantLock;
+import java.util.stream.Collectors;
 
 /**
  * @author Eden
@@ -65,8 +68,16 @@ public class WeixinServiceImpl implements WeixinService {
         if (preciseQueryOptional.isPresent()) {
             wxMpXmlOutMessageBuilder = getWxMpXmlOutMessageBuilder(keyword, preciseQueryOptional.get());
         } else {
+            Map<Long, String> weixinArticleIdToUrlMap = null;
             List<SearchHit<SearchContentPO>> searchHits = searchByKeyword(appTag, keyword);
-            wxMpXmlOutMessageBuilder = getWxMpXmlOutMessageBuilder(keyword, searchHits);
+            if (CollectionUtils.isNotEmpty(searchHits)) {
+                List<Long> weixinArticleIds = searchHits.stream().map(SearchHit::getContent)
+                        .filter(item -> item.getResourceType().equals(ResourceType.WEIXIN_ARTICLE.getCode()))
+                        .map(SearchContentPO::getOriginalId).distinct().collect(Collectors.toList());
+                List<WxMpNewsArticlePO> wxMpNewsArticles = wxMpNewsArticleService.findByIds(weixinArticleIds);
+                weixinArticleIdToUrlMap = wxMpNewsArticles.stream().collect(Collectors.toMap(BasePO::getId, WxMpNewsArticlePO::getUrl));
+            }
+            wxMpXmlOutMessageBuilder = getWxMpXmlOutMessageBuilder(keyword, searchHits, weixinArticleIdToUrlMap);
         }
         wxMpXmlOutMessageBuilder.fromUser(inMessage.getToUser());
         wxMpXmlOutMessageBuilder.toUser(inMessage.getFromUser());
@@ -146,7 +157,7 @@ public class WeixinServiceImpl implements WeixinService {
     }
 
 
-    private BaseBuilder getWxMpXmlOutMessageBuilder(String keyword, List<SearchHit<SearchContentPO>> searchHits) {
+    private BaseBuilder getWxMpXmlOutMessageBuilder(String keyword, List<SearchHit<SearchContentPO>> searchHits, Map<Long, String> weixinArticleIdToUrlMap) {
         BaseBuilder builder;
         if (CollectionUtils.isEmpty(searchHits)) {
 
@@ -179,7 +190,14 @@ public class WeixinServiceImpl implements WeixinService {
                 SearchContentPO searchContent = searchHit.getContent();
                 title = searchContent.getTitle();
                 String scoreStr = scoreDecimalFormat.format(searchHit.getScore());
-                String itemContent = String.format(itemFormat, scoreStr, title);
+                String itemContent;
+                if (weixinArticleIdToUrlMap != null && weixinArticleIdToUrlMap.size() > 0) {
+                    itemFormat = "%s : %s";
+                    itemContent = String.format(itemFormat, scoreStr, title);
+                    itemContent = String.format("<a href=\"%s\">%s</a>\n", weixinArticleIdToUrlMap.get(searchContent.getOriginalId()), itemContent);
+                } else {
+                    itemContent = String.format(itemFormat, scoreStr, title);
+                }
                 resultMsg.append(itemContent);
             }
             TextBuilder textBuilder = WxMpXmlOutMessage.TEXT();

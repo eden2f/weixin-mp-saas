@@ -3,6 +3,7 @@ package com.anyshare.service;
 import com.anyshare.enums.AppTag;
 import com.anyshare.jpa.mysql.po.WxMpNewsArticlePO;
 import com.anyshare.service.common.WxMpNewsArticleService;
+import org.assertj.core.util.Lists;
 import org.junit.jupiter.api.Test;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.util.Assert;
@@ -59,5 +60,11 @@ public class WxMpNewsArticleServiceTest {
         Assert.isTrue(testWxMpNewsArticleOptional.isPresent(), "findTopByTitle");
         Optional<WxMpNewsArticlePO> dailyWxMpNewsArticleOptional = wxMpNewsArticleService.findTopByTitle(AppTag.Daily.getCode(), testWxMpNewsArticles.get(0).getTitle());
         Assert.isTrue(!dailyWxMpNewsArticleOptional.isPresent(), "findTopByTitle");
+    }
+
+    @Test
+    void findByIds() {
+        List<WxMpNewsArticlePO> testWxMpNewsArticles = wxMpNewsArticleService.findIdAndUrlById(Lists.newArrayList(319L, 320L, 321L, 178L, 318L, 242L));
+        Assert.isTrue(!testWxMpNewsArticles.isEmpty(), "findTopByTitle");
     }
 }

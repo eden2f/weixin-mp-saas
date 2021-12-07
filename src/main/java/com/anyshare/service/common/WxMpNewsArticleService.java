@@ -20,5 +20,5 @@ public interface WxMpNewsArticleService {
 
     Page<WxMpNewsArticlePO> page(int pageNum, int pageSize);
 
-    List<WxMpNewsArticlePO> findByIds(List<Long> weixinArticleIds);
+    List<WxMpNewsArticlePO> findIdAndUrlById(List<Long> weixinArticleIds);
 }

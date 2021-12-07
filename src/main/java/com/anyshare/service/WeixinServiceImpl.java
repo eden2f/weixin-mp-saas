@@ -74,7 +74,7 @@ public class WeixinServiceImpl implements WeixinService {
                 List<Long> weixinArticleIds = searchHits.stream().map(SearchHit::getContent)
                         .filter(item -> item.getResourceType().equals(ResourceType.WEIXIN_ARTICLE.getCode()))
                         .map(SearchContentPO::getOriginalId).distinct().collect(Collectors.toList());
-                List<WxMpNewsArticlePO> wxMpNewsArticles = wxMpNewsArticleService.findByIds(weixinArticleIds);
+                List<WxMpNewsArticlePO> wxMpNewsArticles = wxMpNewsArticleService.findIdAndUrlById(weixinArticleIds);
                 weixinArticleIdToUrlMap = wxMpNewsArticles.stream().collect(Collectors.toMap(BasePO::getId, WxMpNewsArticlePO::getUrl));
             }
             wxMpXmlOutMessageBuilder = getWxMpXmlOutMessageBuilder(keyword, searchHits, weixinArticleIdToUrlMap);

@@ -24,6 +24,7 @@ import javax.annotation.Resource;
 import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 /**
  * @author Eden
@@ -81,9 +82,15 @@ public class WxMpNewsArticleServiceImpl implements WxMpNewsArticleService {
     }
 
     @Override
-    public List<WxMpNewsArticlePO> findByIds(List<Long> weixinArticleIds) {
+    public List<WxMpNewsArticlePO> findIdAndUrlById(List<Long> weixinArticleIds) {
         if (CollectionUtils.isNotEmpty(weixinArticleIds)) {
-            return wxMpNewsArticleRepository.findAllById(weixinArticleIds);
+            List<Object[]> bos = wxMpNewsArticleRepository.findIdAndUrlById(weixinArticleIds);
+            return bos.stream().map(item -> {
+                WxMpNewsArticlePO wxMpNewsArticle = new WxMpNewsArticlePO();
+                wxMpNewsArticle.setId((Long) item[0]);
+                wxMpNewsArticle.setUrl((String) item[1]);
+                return wxMpNewsArticle;
+            }).collect(Collectors.toList());
         }
         return Collections.emptyList();
     }

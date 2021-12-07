@@ -20,6 +20,11 @@ import javax.persistence.*;
         indexes = {@Index(columnList = "appTag"), @Index(columnList = "title")})
 public class WxMpNewsArticlePO extends BasePO {
 
+    public WxMpNewsArticlePO(Long id, String url) {
+        this.setId(id);
+        this.url = url;
+    }
+
     /**
      * 图文消息的封面图片素材id（必须是永久mediaID）
      */

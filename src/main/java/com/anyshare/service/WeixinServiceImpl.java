@@ -11,7 +11,11 @@ import com.anyshare.service.common.WxMpNewsArticleService;
 import com.anyshare.service.eventdriven.event.ResourceUpdateEvent;
 import lombok.extern.slf4j.Slf4j;
 import me.chanjar.weixin.common.error.WxErrorException;
+import me.chanjar.weixin.mp.api.WxMpFreePublishService;
 import me.chanjar.weixin.mp.api.WxMpMaterialService;
+import me.chanjar.weixin.mp.bean.freepublish.WxMpFreePublishArticles;
+import me.chanjar.weixin.mp.bean.freepublish.WxMpFreePublishItem;
+import me.chanjar.weixin.mp.bean.freepublish.WxMpFreePublishList;
 import me.chanjar.weixin.mp.bean.material.WxMpMaterialCountResult;
 import me.chanjar.weixin.mp.bean.material.WxMpMaterialNewsBatchGetResult;
 import me.chanjar.weixin.mp.bean.material.WxMpNewsArticle;
@@ -229,6 +233,50 @@ public class WeixinServiceImpl implements WeixinService {
             }
             startIndex += size;
         }
+    }
+
+    /**
+     * 拉取永久素材中的图文
+     */
+    @Override
+    public void freePublishSynchronizer(String appTag, WxMpFreePublishService freePublishService) throws WxErrorException {
+        int startIndex = 0;
+        int size = 10;
+        Integer totalCount;
+        Integer itemCount;
+        do {
+            WxMpFreePublishList wxMpFreePublishList = freePublishService.getPublicationRecords(startIndex, size);
+            totalCount = wxMpFreePublishList.getTotalCount();
+            itemCount = wxMpFreePublishList.getItemCount();
+            log.info("appTag = {}, totalCount = {}, itemCount = {}", appTag, totalCount, itemCount);
+            List<WxMpFreePublishItem> items = wxMpFreePublishList.getItems();
+            if (CollectionUtils.isNotEmpty(items)) {
+                for (WxMpFreePublishItem item : items) {
+                    if (item != null && item.getContent() != null && item.getContent().getNewsItem() != null) {
+                        List<WxMpFreePublishArticles> freePublishArticles = item.getContent().getNewsItem();
+                        for (WxMpFreePublishArticles freePublishArticle : freePublishArticles) {
+                            WxMpNewsArticlePO wxMpNewsArticle = WxMpNewsArticlePO.createDefault(WxMpNewsArticlePO.class);
+                            wxMpNewsArticle.setUrl(freePublishArticle.getUrl());
+                            wxMpNewsArticle.setThumbMediaId(freePublishArticle.getThumbMediaId());
+                            wxMpNewsArticle.setAuthor(freePublishArticle.getAuthor());
+                            wxMpNewsArticle.setTitle(freePublishArticle.getTitle());
+                            wxMpNewsArticle.setContentSourceUrl(freePublishArticle.getContentSourceUrl());
+                            wxMpNewsArticle.setContent(freePublishArticle.getContent());
+                            wxMpNewsArticle.setDigest(freePublishArticle.getDigest());
+                            Integer showCoverPic = freePublishArticle.getShowCoverPic();
+                            wxMpNewsArticle.setShowCoverPic(showCoverPic != null && showCoverPic == 1);
+                            wxMpNewsArticle.setUrl(freePublishArticle.getUrl());
+                            Integer needOpenComment = freePublishArticle.getNeedOpenComment();
+                            wxMpNewsArticle.setNeedOpenComment(needOpenComment != null && needOpenComment == 1);
+                            Integer onlyFansCanComment = freePublishArticle.getOnlyFansCanComment();
+                            wxMpNewsArticle.setOnlyFansCanComment(onlyFansCanComment != null && onlyFansCanComment == 1);
+                            wxMpNewsArticle.setAppTag(appTag);
+                            wxMpNewsArticleService.insert(appTag, wxMpNewsArticle);
+                        }
+                    }
+                }
+            }
+        } while (startIndex > (totalCount + size));
     }
 
     @Override

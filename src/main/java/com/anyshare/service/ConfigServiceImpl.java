@@ -93,13 +93,25 @@ public class ConfigServiceImpl implements ConfigService {
     }
 
     private WxMpService materialNewsSynchronizer(String appTag, WxMpConfigStorage wxMpConfigStorage) {
+        boolean fail = false;
         WxMpService wxMpService = new WxMpServiceImpl();
         wxMpService.setWxMpConfigStorage(wxMpConfigStorage);
+        wxMpService.getDraftService();
+        wxMpService.getFreePublishService();
         WxMpMaterialService wxMpMaterialService = wxMpService.getMaterialService();
         try {
             weixinService.materialNewsSynchronizer(appTag, wxMpMaterialService);
         } catch (WxErrorException we) {
             log.info(String.format("同步微信物料发生异常, %s", appTag), we);
+            fail = true;
+        }
+        try {
+            weixinService.freePublishSynchronizer(appTag, wxMpService.getFreePublishService());
+        } catch (WxErrorException we) {
+            log.info(String.format("同步微信物料发生异常, %s", appTag), we);
+            fail = true;
+        }
+        if (fail) {
             throw new ServiceException("请检查下微信公众配置有误,请稍后重试!");
         }
         return wxMpService;

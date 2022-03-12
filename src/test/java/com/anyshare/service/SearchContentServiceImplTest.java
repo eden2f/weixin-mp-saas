@@ -102,7 +102,7 @@ class SearchContentServiceImplTest {
 
     @Test
     void findByTitleOrDigestOrContent() {
-        SearchHits<SearchContentPO> searchHits = searchContentService.findByTitleOrDigestOrContent(AppTag.AnyShare.getCode(), "的");
+        SearchHits<SearchContentPO> searchHits = searchContentService.findByTitleOrDigestOrContent("huiqiqiu", "mybatis");
         Assert.isTrue(CollectionUtils.isNotEmpty(searchHits.getSearchHits()), "findByTitleOrDigestOrContent");
     }
 }

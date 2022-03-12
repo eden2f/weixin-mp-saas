@@ -1,6 +1,7 @@
 package com.anyshare.service;
 
 import me.chanjar.weixin.common.error.WxErrorException;
+import me.chanjar.weixin.mp.api.WxMpFreePublishService;
 import me.chanjar.weixin.mp.api.WxMpMaterialService;
 import me.chanjar.weixin.mp.bean.message.WxMpXmlMessage;
 import me.chanjar.weixin.mp.bean.message.WxMpXmlOutMessage;
@@ -16,4 +17,7 @@ public interface WeixinService {
     void materialNewsSynchronizer(String appTag, WxMpMaterialService wxMpMaterialService) throws WxErrorException;
 
     void reindexEsContent(String appTag);
+
+    void freePublishSynchronizer(String appTag, WxMpFreePublishService freePublishService) throws WxErrorException;
+
 }

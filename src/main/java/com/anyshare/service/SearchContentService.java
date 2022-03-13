@@ -20,4 +20,7 @@ public interface SearchContentService {
     List<SearchContentPO> findByTitle(String title);
 
     SearchHits<SearchContentPO> findByTitleOrDigestOrContent(String appTag, String searchKey);
+
+    SearchHits<SearchContentPO> findByAppTagsOrTitleOrDigestOrContent(List<String> appTags, String searchKey);
+
 }

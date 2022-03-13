@@ -11,6 +11,6 @@ public interface AppOpenApiConfigRepository extends JpaRepository<AppOpenApiConf
 
     AppOpenApiConfigPO findByAppTag(String appTag);
 
-    AppOpenApiConfigPO findByAppid(String appid);
+    AppOpenApiConfigPO findByAppId(String appId);
 
 }

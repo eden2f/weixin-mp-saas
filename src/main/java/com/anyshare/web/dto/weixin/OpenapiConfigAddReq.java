@@ -14,7 +14,7 @@ public class OpenapiConfigAddReq {
     @NotBlank(message = "appTag 不能为空")
     private String appTag;
 
-    @NotBlank(message = "appid 不能为空")
+    @NotBlank(message = "appId 不能为空")
     private String appId;
 
     @NotBlank(message = "secret 不能为空")

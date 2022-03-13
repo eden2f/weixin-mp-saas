@@ -62,7 +62,7 @@ public class WxMpConfig {
     public Map<String, WxMpConfigStorage> wxMpConfigStorageMap(Map<String, AppOpenApiConfigPO> appOpenApiConfigMap) {
         for (AppOpenApiConfigPO appOpenApiConfig : appOpenApiConfigMap.values()) {
             WxMpDefaultConfigImpl config = new WxMpDefaultConfigImpl();
-            config.setAppId(appOpenApiConfig.getAppid());
+            config.setAppId(appOpenApiConfig.getAppId());
             config.setSecret(appOpenApiConfig.getSecret());
             config.setToken(appOpenApiConfig.getToken());
             config.setAesKey(appOpenApiConfig.getAesKey());

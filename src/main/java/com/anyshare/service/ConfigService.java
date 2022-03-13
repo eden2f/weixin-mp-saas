@@ -1,6 +1,7 @@
 package com.anyshare.service;
 
 import com.anyshare.web.dto.weixin.OpenapiConfigAddReq;
+import com.anyshare.web.dto.weixin.OpenapiConfigDrainageEnableReq;
 import com.anyshare.web.dto.weixin.OpenapiConfigUpdateReq;
 import com.anyshare.web.dto.weixin.OpenapiReindexSearchContentReq;
 
@@ -15,4 +16,6 @@ public interface ConfigService {
     void openapiConfigUpdate(OpenapiConfigUpdateReq req);
 
     void reindexSearchContent(OpenapiReindexSearchContentReq req);
+
+    void drainageEnable(OpenapiConfigDrainageEnableReq req);
 }

@@ -8,6 +8,7 @@ import org.apache.commons.lang3.StringUtils;
 import org.elasticsearch.index.query.BoolQueryBuilder;
 import org.elasticsearch.index.query.MatchQueryBuilder;
 import org.elasticsearch.index.query.TermQueryBuilder;
+import org.elasticsearch.index.query.TermsQueryBuilder;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.elasticsearch.core.ElasticsearchRestTemplate;
@@ -84,6 +85,26 @@ public class SearchContentServiceImpl implements SearchContentService {
         MatchQueryBuilder contentTagQueryBuilder = new MatchQueryBuilder("content", searchKey);
         boolQueryBuilder.filter(appTagQueryBuilder)
                 .should(titleTagQueryBuilder)
+                .should(digestTagQueryBuilder)
+                .should(contentTagQueryBuilder);
+        boolQueryBuilder.minimumShouldMatch(1);
+        boolQueryBuilder.boost(1);
+        NativeSearchQuery nativeSearchQuery = new NativeSearchQuery(boolQueryBuilder);
+        nativeSearchQuery.setPageable(pageable);
+        return elasticsearchRestTemplate.search(nativeSearchQuery, SearchContentPO.class);
+    }
+
+    @Override
+    public SearchHits<SearchContentPO> findByAppTagsOrTitleOrDigestOrContent(List<String> appTags, String searchKey) {
+        Assert.isTrue(StringUtils.isNoneBlank(searchKey), "搜索关键字不能为空");
+        Pageable pageable = PageRequest.of(0, 6);
+        BoolQueryBuilder boolQueryBuilder = new BoolQueryBuilder();
+        TermsQueryBuilder appTagQueryBuilder = new TermsQueryBuilder("appTag", appTags);
+        boolQueryBuilder.filter(appTagQueryBuilder);
+        MatchQueryBuilder titleTagQueryBuilder = new MatchQueryBuilder("title", searchKey);
+        MatchQueryBuilder digestTagQueryBuilder = new MatchQueryBuilder("digest", searchKey);
+        MatchQueryBuilder contentTagQueryBuilder = new MatchQueryBuilder("content", searchKey);
+        boolQueryBuilder.should(titleTagQueryBuilder)
                 .should(digestTagQueryBuilder)
                 .should(contentTagQueryBuilder);
         boolQueryBuilder.minimumShouldMatch(1);

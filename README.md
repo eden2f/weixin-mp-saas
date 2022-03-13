@@ -106,7 +106,7 @@ java -jar -Dserver.port=8080 -Dmysql.host=localhost:3306 -Dmysql.username=root -
 * 调用Http接口
     * 开发者密码(AppSecret) : "secret"
     * 消息加解密密钥 : "aesKey"
-    * 开发者ID(AppID) : "appid"
+    * 开发者ID(AppID) : "appId"
     * 令牌(Token) : "token"
     * 应用标识 : "appTag"
 
@@ -127,7 +127,7 @@ curl --location --request POST 'http://127.0.0.1:8080/weixin-mp-saas/config/weix
     "appTag":"xx",
     "secret":"xx",
     "aesKey":"xx",
-    "appid":"xx",
+    "appId":"xx",
     "token":"xx",
     "verifyValue":"xx",
     "verifyKey":"xx"
@@ -154,6 +154,20 @@ curl --location --request POST 'http://127.0.0.1:8080/weixin-mp-saas/config/weix
     "openapiConfigVerify":{
         "secret":"xx"
     }
+}'
+```
+
+#### 关闭跨公众号搜索能力
+
+secret 用于验证,当其等于原有配置的secret,才允许更新.
+
+```shell script
+curl --location --request POST 'http://127.0.0.1:8080/weixin-mp-saas/config/weixin/drainage/enable' \
+--header 'Content-Type: application/json' \
+--data-raw '{
+    "appTag":"test",
+    "secret":"testSecret",
+    "enable" : "false"
 }'
 ```
 

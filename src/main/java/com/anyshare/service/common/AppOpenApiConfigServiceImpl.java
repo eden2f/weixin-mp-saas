@@ -44,7 +44,7 @@ public class AppOpenApiConfigServiceImpl implements AppOpenApiConfigService {
     public Long saveOrUpdate(AppOpenApiConfigPO appOpenApiConfig) {
         AppOpenApiConfigPO appOpenApiConfigInDb = findByAppTag(appOpenApiConfig.getAppTag());
         if (appOpenApiConfigInDb == null) {
-            appOpenApiConfigInDb = appOpenApiConfigRepository.findByAppid(appOpenApiConfig.getAppid());
+            appOpenApiConfigInDb = appOpenApiConfigRepository.findByAppId(appOpenApiConfig.getAppId());
         }
         if (appOpenApiConfigInDb != null) {
             BeanUtil.copyProperties(appOpenApiConfig, appOpenApiConfigInDb, CopyOptions.create().setIgnoreNullValue(true).setIgnoreError(true));

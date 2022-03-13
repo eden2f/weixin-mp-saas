@@ -1,11 +1,14 @@
 package com.anyshare.service;
 
+import com.anyshare.enums.AppTag;
 import com.anyshare.enums.ResourceType;
 import com.anyshare.exception.ServiceException;
 import com.anyshare.jpa.es.po.SearchContentPO;
+import com.anyshare.jpa.mysql.po.AppOpenApiConfigPO;
 import com.anyshare.jpa.mysql.po.BasePO;
 import com.anyshare.jpa.mysql.po.ShareResourcePO;
 import com.anyshare.jpa.mysql.po.WxMpNewsArticlePO;
+import com.anyshare.service.common.AppOpenApiConfigService;
 import com.anyshare.service.common.ShareResourceService;
 import com.anyshare.service.common.WxMpNewsArticleService;
 import com.anyshare.service.eventdriven.event.ResourceUpdateEvent;
@@ -58,6 +61,8 @@ public class WeixinServiceImpl implements WeixinService {
     private SearchContentService searchContentService;
     @Resource
     private ApplicationContext applicationContext;
+    @Resource
+    private AppOpenApiConfigService appOpenApiConfigService;
 
     private ReentrantLock reindexEsContentLock = new ReentrantLock();
 
@@ -98,7 +103,17 @@ public class WeixinServiceImpl implements WeixinService {
      * @return 检索到的内容
      */
     private List<SearchHit<SearchContentPO>> searchByKeyword(String appTag, String keyword) {
-        SearchHits<SearchContentPO> searchHits = searchContentService.findByTitleOrDigestOrContent(appTag, keyword);
+        AppOpenApiConfigPO appOpenApiConfigPo = appOpenApiConfigService.findByAppTag(appTag);
+        //  开启公众号分流能力的公众号启用分流查询
+        SearchHits<SearchContentPO> searchHits;
+        if (appOpenApiConfigPo.drainageEnable()) {
+            List<AppOpenApiConfigPO> appOpenApiConfigPos = appOpenApiConfigService.findAll();
+            List<String> appTags = appOpenApiConfigPos.stream().filter(AppOpenApiConfigPO::drainageEnable).map(AppOpenApiConfigPO::getAppTag).distinct().collect(Collectors.toList());
+            appTags.removeIf(item -> item.equals(AppTag.Test.getCode()));
+            searchHits = searchContentService.findByAppTagsOrTitleOrDigestOrContent(appTags, keyword);
+        } else {
+            searchHits = searchContentService.findByTitleOrDigestOrContent(appTag, keyword);
+        }
         return searchHits.getSearchHits();
     }
 
@@ -236,7 +251,7 @@ public class WeixinServiceImpl implements WeixinService {
     }
 
     /**
-     * 拉取永久素材中的图文
+     * 拉取已发布的文章
      */
     @Override
     public void freePublishSynchronizer(String appTag, WxMpFreePublishService freePublishService) throws WxErrorException {

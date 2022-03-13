@@ -9,6 +9,7 @@ import com.anyshare.jpa.mysql.repository.WxMpNewsArticleRepository;
 import com.anyshare.service.eventdriven.event.ResourceAddEvent;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.collections4.CollectionUtils;
+import org.assertj.core.util.Lists;
 import org.junit.jupiter.api.Test;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.context.ApplicationContext;
@@ -105,4 +106,12 @@ class SearchContentServiceImplTest {
         SearchHits<SearchContentPO> searchHits = searchContentService.findByTitleOrDigestOrContent("huiqiqiu", "mybatis");
         Assert.isTrue(CollectionUtils.isNotEmpty(searchHits.getSearchHits()), "findByTitleOrDigestOrContent");
     }
+
+    @Test
+    void findByAppTagsOrTitleOrDigestOrContent() {
+        List<String> appTags = Lists.newArrayList("huiqiqiu", AppTag.Test.getCode());
+        SearchHits<SearchContentPO> searchHits = searchContentService.findByAppTagsOrTitleOrDigestOrContent(appTags, "帆乘,楷栋,锋枫,海勇,康帆,安礼,晓平,良帆");
+        Assert.isTrue(CollectionUtils.isNotEmpty(searchHits.getSearchHits()), "findByAppTagsOrTitleOrDigestOrContent");
+    }
+
 }

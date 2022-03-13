@@ -157,20 +157,6 @@ curl --location --request POST 'http://127.0.0.1:8080/weixin-mp-saas/config/weix
 }'
 ```
 
-#### 关闭跨公众号搜索能力
-
-secret 用于验证,当其等于原有配置的secret,才允许更新.
-
-```shell script
-curl --location --request POST 'http://127.0.0.1:8080/weixin-mp-saas/config/weixin/drainage/enable' \
---header 'Content-Type: application/json' \
---data-raw '{
-    "appTag":"test",
-    "secret":"testSecret",
-    "enable" : "false"
-}'
-```
-
 ### 效果演示
 
 ![微信公众号示例](docs/imgs/589694216028358.jpg)
@@ -193,7 +179,19 @@ server {
 }
 ```
 
+#### 关闭跨公众号搜索能力
 
+secret 用于验证,当其等于原有配置的secret,才允许更新.
+
+```shell script
+curl --location --request POST 'http://127.0.0.1:8080/weixin-mp-saas/config/weixin/drainage/enable' \
+--header 'Content-Type: application/json' \
+--data-raw '{
+    "appTag":"test",
+    "secret":"testSecret",
+    "enable" : "false"
+}'
+```
 
 
 

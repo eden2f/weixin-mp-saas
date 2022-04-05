@@ -102,6 +102,13 @@ public class ConfigServiceImpl implements ConfigService {
         appOpenApiConfigService.saveOrUpdate(appOpenApiConfigPo);
     }
 
+    @Override
+    public void drainageCloseForAdmin(String appTag) {
+        AppOpenApiConfigPO appOpenApiConfigPo = appOpenApiConfigService.findByAppTag(appTag);
+        appOpenApiConfigPo.setDrainageEnable(DelStatus.VALID.getCode());
+        appOpenApiConfigService.saveOrUpdate(appOpenApiConfigPo);
+    }
+
     private WxMpService materialNewsSynchronizer(String appTag, WxMpConfigStorage wxMpConfigStorage) {
         boolean fail = false;
         WxMpService wxMpService = new WxMpServiceImpl();

@@ -18,4 +18,6 @@ public interface ConfigService {
     void reindexSearchContent(OpenapiReindexSearchContentReq req);
 
     void drainageEnable(OpenapiConfigDrainageEnableReq req);
+
+    void drainageCloseForAdmin(String appTag);
 }

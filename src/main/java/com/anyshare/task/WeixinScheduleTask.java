@@ -35,9 +35,11 @@ public class WeixinScheduleTask {
     private static final Map<String, Integer> WRONG_COUNT_MAP = new HashMap<>();
 
     /**
+     * todo 应该区分共享开关和公众号配置可用开关
      * 三次失败就关闭共享功能
      */
     private static final Integer DRAINAGE_CLOSE_MAX_WRONG_COUNT = 3;
+
 
     @Async
     @Scheduled(cron = "0 0 4,16 * * ?")

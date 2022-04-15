@@ -1,7 +1,9 @@
 package com.anyshare.task;
 
+import com.anyshare.jpa.mysql.po.AppOpenApiConfigPO;
 import com.anyshare.service.ConfigService;
 import com.anyshare.service.WeixinService;
+import com.anyshare.service.common.AppOpenApiConfigService;
 import com.anyshare.web.config.WxMpConfig;
 import lombok.extern.slf4j.Slf4j;
 import me.chanjar.weixin.mp.api.WxMpMaterialService;
@@ -31,6 +33,8 @@ public class WeixinScheduleTask {
     private WeixinService weixinService;
     @Resource
     private ConfigService configService;
+    @Resource
+    private AppOpenApiConfigService appOpenApiConfigService;
 
     private static final Map<String, Integer> WRONG_COUNT_MAP = new HashMap<>();
 
@@ -48,6 +52,11 @@ public class WeixinScheduleTask {
         StopWatch sw = new StopWatch("materialNewsSynchronismTask");
         for (String appTag : WxMpConfig.WX_MP_SERVICE_MAP.keySet()) {
             sw.start(String.format("%s materialNewsSynchronismTask", appTag));
+            AppOpenApiConfigPO appOpenApiConfig = appOpenApiConfigService.findByAppTag(appTag);
+            if (!appOpenApiConfig.drainageEnable()) {
+                log.info("{} 已关闭分流跳过", appTag);
+                continue;
+            }
             boolean noError = true;
             try {
                 WxMpService wxMpService = WxMpConfig.getWxMpServiceByAppTag(appTag);
@@ -71,6 +80,6 @@ public class WeixinScheduleTask {
             }
             sw.stop();
         }
-        log.info(" 完成, 耗时:{}s", sw.getTotalTimeSeconds());
+        log.info("完成, 耗时:{}s", sw.getTotalTimeSeconds());
     }
 }

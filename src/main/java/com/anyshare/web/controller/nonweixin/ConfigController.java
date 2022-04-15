@@ -7,10 +7,8 @@ import com.anyshare.web.dto.weixin.OpenapiConfigDrainageEnableReq;
 import com.anyshare.web.dto.weixin.OpenapiConfigUpdateReq;
 import com.anyshare.web.dto.weixin.OpenapiReindexSearchContentReq;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import me.chanjar.weixin.common.error.WxErrorException;
+import org.springframework.web.bind.annotation.*;
 
 import javax.annotation.Resource;
 import javax.validation.Valid;
@@ -52,6 +50,17 @@ public class ConfigController {
     @PostMapping(value = "weixin/drainage/enable")
     public RetResult<Void> dlaorainageEnable(@Valid @RequestBody OpenapiConfigDrainageEnableReq req) {
         configService.drainageEnable(req);
+        return RetResult.success();
+    }
+
+    /**
+     * 设置快捷回复与关注自动回复
+     */
+    @PostMapping(value = "weixin/guide/setguideconfig")
+    public RetResult<Void> setGuideConfig(@RequestParam String appTag,
+                                          @RequestParam String secret,
+                                          @RequestParam String json) throws WxErrorException {
+        configService.setGuideConfig(appTag, secret, json);
         return RetResult.success();
     }
 }

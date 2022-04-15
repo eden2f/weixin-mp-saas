@@ -1,5 +1,7 @@
 package com.anyshare.service;
 
+import com.alibaba.fastjson.JSON;
+import com.alibaba.fastjson.JSONObject;
 import com.anyshare.enums.DelStatus;
 import com.anyshare.exception.ServiceException;
 import com.anyshare.jpa.mysql.po.AppOpenApiConfigPO;
@@ -14,6 +16,7 @@ import me.chanjar.weixin.common.error.WxErrorException;
 import me.chanjar.weixin.mp.api.WxMpMaterialService;
 import me.chanjar.weixin.mp.api.WxMpService;
 import me.chanjar.weixin.mp.api.impl.WxMpServiceImpl;
+import me.chanjar.weixin.mp.bean.guide.WxMpAddGuideAutoReply;
 import me.chanjar.weixin.mp.config.WxMpConfigStorage;
 import me.chanjar.weixin.mp.config.impl.WxMpDefaultConfigImpl;
 import org.apache.commons.lang3.BooleanUtils;
@@ -132,6 +135,31 @@ public class ConfigServiceImpl implements ConfigService {
             throw new ServiceException("请检查下微信公众配置有误,请稍后重试!");
         }
         return wxMpService;
+    }
+
+
+    /**
+     * 设置快捷回复与关注自动回复
+     * 微信开发者文档 : https://developers.weixin.qq.com/doc/offiaccount/Shopping_Guide/guide-account/shopping-guide.setGuideConfig.html
+     *
+     * @param appTag 应用标识
+     * @param secret 密钥
+     * @param json   请求体
+     * @throws WxErrorException 微信调用异常
+     */
+    @Override
+    public void setGuideConfig(String appTag, String secret, String json) throws WxErrorException {
+        checkSecretGetApiConfig(appTag, secret);
+        WxMpService wxMpService = WxMpConfig.getWxMpServiceByAppTag(appTag);
+        JSONObject jsonObject = JSON.parseObject(json);
+        wxMpService.getGuideService().setGuideConfig(
+                jsonObject.getString("guide_account"),
+                jsonObject.getString("guide_openid"),
+                jsonObject.getBoolean("is_delete"),
+                jsonObject.getJSONArray("guide_fast_reply_list").toJavaList(String.class),
+                WxMpAddGuideAutoReply.fromJson(jsonObject.getJSONObject("guide_auto_reply").toJSONString()),
+                WxMpAddGuideAutoReply.fromJson(jsonObject.getJSONObject("guide_auto_reply_plus").toJSONString())
+        );
     }
 
 }
